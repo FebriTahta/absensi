@@ -1,0 +1,97 @@
+create database rfid_absensi ;
+use rfid_absensi ;
+
+create table tbl_pegawai(
+	id varchar(20) ,
+	idjabatan int(5) ,
+	nama varchar(20) ,
+	tgl date ,
+	ttl varchar(50) ,
+	alamat varchar(70),
+	telp varchar(16) 
+);
+
+
+create table tbl_tunjangan(
+	id int(5) NOT NULL AUTO_INCREMENT,
+	jenis varchar(30) ,
+	besar int(10) ,
+	PRIMARY KEY (id)
+);
+
+insert into tbl_pegawai(id,idjabatan,nama,tgl,ttl,alamat,telp) values('1223330',1,'Gintama','2021-6-3','Surabaya','Plandi',0816566 );
+insert into tbl_pegawai(id,idjabatan,nama,tgl,ttl,alamat,telp) values('1527240',2,'Sarada','2021-6-3','Surabaya','Plandi',0816566 );
+
+insert table tbl_pegawai values(id,idjabatan,nama,tgl,ttl,alamat,telp) values('893340',3,'Gintama',2021-6-3,Surabaya,0816566 );
+
+
+insert into tbl_tunjangan(id,jenis,besar) values(1,'Kesehatan',150000);
+insert into tbl_tunjangan(id,jenis,besar) values(2,'jabatan',700000);
+insert into tbl_tunjangan(id,jenis,besar) values(3,'makan siang',250000);
+insert into tbl_tunjangan(id,jenis,besar) values(4,'keluarga',300000);
+insert into tbl_tunjangan(id,jenis,besar) values(5,'Hari Raya',300000);
+insert into tbl_tunjangan(id,jenis,besar) values(6,'Pensiun',300000);
+
+create table tbl_jabatan(
+	id int(5) NOT NULL AUTO_INCREMENT,
+	idtunjangan int(5) ,
+	jabatan varchar(30) ,
+	gajipokok int(10) ,
+	PRIMARY KEY (id)
+);
+
+insert into tbl_jabatan(id,idtunjangan,jabatan,gajipokok) values(1,1,'Teknisi Komputer', 15000000 );
+insert into tbl_jabatan(id,idtunjangan,jabatan,gajipokok) values(2,2,'Office Boy' , 25000000 );
+insert into tbl_jabatan(id,idtunjangan,jabatan,gajipokok) values(3,4,'Manager' , 4500000 );
+insert into tbl_jabatan(id,idtunjangan,jabatan,gajipokok) values(4,2,'Pegawai A', 2600000 );
+insert into tbl_jabatan(id,idtunjangan,jabatan,gajipokok) values(5,3,'Pegawai B' , 3600000 );
+insert into tbl_jabatan(id,idtunjangan,jabatan,gajipokok) values(6,2,'Pegawai C' , 2400000 );
+
+create table tbl_potongan(
+	id int(5) NOT NULL AUTO_INCREMENT,
+	jenis varchar(30) ,
+	besar int(10) ,
+	PRIMARY KEY (id)
+);
+
+insert into tbl_potongan(id,jenis,besar) values(1,'Pajak PPH',20000);
+insert into tbl_potongan(id,jenis,besar) values(2,'Iuran Kas',30000);
+insert into tbl_potongan(id,jenis,besar) values(3,'Dana Pensiun',10000);
+insert into tbl_potongan(id,jenis,besar) values(4,'Potong Hutang',70000);
+
+
+
+create table tbl_absensi(
+	id int(5) NOT NULL AUTO_INCREMENT,
+	idpegawai varchar(20) ,
+	tanggal date ,
+	jam_hadir time ,
+	jam_pulang time,
+	PRIMARY KEY (id)
+);
+
+
+create table tbl_datapotongankaryawan(
+	id int(5) NOT NULL AUTO_INCREMENT,
+	idpegawai varchar(20) ,
+	idpotongan int(5) ,
+	PRIMARY KEY (id)
+);
+
+INSERT INTO tbl_datapotongankaryawan(id,idpegawai,idpotongan) values(1,'1223330',1);
+INSERT INTO tbl_datapotongankaryawan(id,idpegawai,idpotongan) values(2,'1223330',2);
+INSERT INTO tbl_datapotongankaryawan(id,idpegawai,idpotongan) values(3,'1223330',3);
+INSERT INTO tbl_datapotongankaryawan(id,idpegawai,idpotongan) values(4,'1223330',4);
+
+INSERT INTO tbl_datapotongankaryawan(id,idpegawai,idpotongan) values(5,'1527240',1);
+INSERT INTO tbl_datapotongankaryawan(id,idpegawai,idpotongan) values(6,'1527240',2);
+INSERT INTO tbl_datapotongankaryawan(id,idpegawai,idpotongan) values(7,'1527240',3);
+INSERT INTO tbl_datapotongankaryawan(id,idpegawai,idpotongan) values(8,'1527240',4);
+
+create table tbl_karturfid(
+	id int(5) NOT NULL AUTO_INCREMENT,
+	value varchar(30) ,
+	PRIMARY KEY (id)
+);
+
+INSERT INTO `tbl_absensi` ( `idpegawai`, `tanggal`, `jam_hadir`, `jam_pulang`) VALUES ('1213597', '2021-07-24', '07:00:00', '14:00:00');
