@@ -55,3 +55,18 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home')->middleware('checkrole');
 // });
 
+Route::get('/daftar-pegawai', 'PenggajianCont@index')->middleware('checkrole');
+Route::get('/data-daftar-pegawai', 'PenggajianCont@data_pegawai')->name('data_pegawai');
+Route::get('/detail-gaji/{id_pegawai}','PenggajianCont@detail_gaji');
+Route::get('/detail-gaji-pegawai/{id_pegawai}','PenggajianCont@detail_gaji_pegawai');
+Route::get('/cok/{id_pegawai}','PenggajianCont@detail_gaji_pegawai2');
+
+Route::get('/total-jam-kerja/{pegawai_id}','PenggajianCont@total_jam_kerja');
+Route::get('/total-jam-lembur/{pegawai_id}','PenggajianCont@total_jam_lembur');
+Route::get('/total-potongan/{pegawai_id}','PenggajianCont@total_potongan');
+Route::get('/total-gajibersih/{pegawai_id}','PenggajianCont@total_gajibersih');
+
+Route::get('/total-jam-kerja2/{pegawai_id}','PenggajianCont@total_jam_kerja2');
+Route::get('/total-jam-lembur2/{pegawai_id}','PenggajianCont@total_jam_lembur2');
+Route::get('/total-potongan2/{pegawai_id}','PenggajianCont@total_potongan2');
+Route::get('/total-gajibersih2/{pegawai_id}','PenggajianCont@total_gajibersih2');

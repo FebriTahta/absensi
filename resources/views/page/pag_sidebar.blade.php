@@ -85,8 +85,14 @@
                   <p>Absensi</p>
                 </a>
               </li>
-              <li class="nav-item">
+              <!-- <li class="nav-item">
                 <a href="/pengajian" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Penggajian</p>
+                </a>
+              </li> -->
+              <li class="nav-item">
+                <a href="/daftar-pegawai" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Penggajian</p>
                 </a>

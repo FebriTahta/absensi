@@ -105,7 +105,7 @@
 								class="custom-select col-md-6"
 								name="jenispotongan-0"
 							>
-								@foreach ($potongan as $index => $potongan_item)
+								@foreach ($potongan as $key => $potongan_item)
 									<option 
 										data-select2-id="31" 
 										value="{{ $jabatan_item->id }}"
@@ -194,7 +194,7 @@
 							<tr>
 							  <th>{{ $index +1 }}</th>
 							  <th>{{  $user->nama }}</th>
-							  <th>{{  $user->jabatan }}</th>
+							  <th>{{  $user->jabatan->jabatan }}</th>
 							  <th>{{  $user->alamat }}</th>
 							  <th>{{  $user->telp }}</th>
 							  <th>
@@ -225,6 +225,7 @@
 <script>
 <?php
 	$value = "" ;
+	$potongan = App\Potongan::all();
 	foreach( $potongan  as $item )
 		$value .= "<option data-select2-id='31' value='".$item->id."'>".$item->jenis."</<option>" ;
 ?>

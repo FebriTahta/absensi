@@ -50,7 +50,7 @@
 							@foreach ($users as $index => $userpegawai)
 								<option 
 									data-select2-id="31" 
-									value="{{ $userpegawai->idpegawai }}"
+									value="{{ $userpegawai->id }}"
 								>{{ $userpegawai->nama }}</option>
 							@endforeach
                         </select>
@@ -141,8 +141,8 @@
 							  @foreach ($absensi as $index => $item_absensi)
 							
 								<tr>
-								  <th>{{ $item_absensi->idpegawai }}</th>
-								  <th>{{ $item_absensi->nama }}</th>
+								  <th>{{ $item_absensi->pegawai->id }}</th>
+								  <th>{{ $item_absensi->pegawai->nama }}</th>
 								  <th>{{ $item_absensi->tanggal }}</th>
 								  <th>{{ Carbon\Carbon::parse($item_absensi->jam_hadir)->format('H:i:s') }}</th>
 								  <th>{{ Carbon\Carbon::parse($item_absensi->jam_pulang)->format('H:i:s') }}</th>

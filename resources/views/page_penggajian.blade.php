@@ -194,7 +194,7 @@
                                         type="text" 
                                         class="form-control" 
                                         id="lembur" 
-                                        value="@currency(  $nominallembur )"
+                                        value="{{ $jamlembur }}"
                                         readonly
                                     >
                                 </div>

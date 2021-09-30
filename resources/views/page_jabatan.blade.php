@@ -106,7 +106,7 @@
 						  <thead>
 							<tr>
 							  <th>No</th>
-							  <th>Nama</th>
+							  <th>Nama Jabatan</th>
 							  <th>Gaji Pokok</th>
 							  <th>Jenis Tunjangan</th>
 							  <th>Besar Tunjangan</th>
@@ -120,8 +120,8 @@
 							  <th>{{ $index +1 }}</th>
 							  <th>{{ $user->jabatan }}</th>
 							  <th>@currency( $user->gajipokok )</th>
-							  <th>{{ $user->jenis }}</th>
-							  <th>@currency( $user->besar )</th>
+							  <th>{{ $user->tunjangan->jenis }}</th>
+							  <th>@currency( $user->tunjangan->besar )</th>
 							  <th>
 								<a 
 									href="/updatejabatan/{{$user->idjabatan}}"

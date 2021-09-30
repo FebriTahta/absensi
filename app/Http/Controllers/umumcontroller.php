@@ -4,6 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Tunjangan;
+use App\Jabatan;
+use App\Pegawai;
+use App\Potongan;
+use App\Absensi;
+use App\Rfid;
 USE DB ;
 
 class umumcontroller extends Controller
@@ -35,8 +41,11 @@ class umumcontroller extends Controller
 	
 	public function page_getDataUID(){
 		//=================================>
-		$db_res = DB::table('tbl_karturfid')
-			->where('tbl_karturfid.id' , 1 )
+		// $db_res = DB::table('tbl_karturfid')
+		// 	->where('tbl_karturfid.id' , 1 )
+		// 	->get();
+		$db_res = Rfid::
+			where('id' , 1 )
 			->get();
 		//================================>
 		echo json_encode( $db_res);
@@ -99,8 +108,11 @@ class umumcontroller extends Controller
 			//====>		RFID data sukses disimpan .
 
 			//====> [1] Proses pertama , cek informasi UID pada table pegawai . 
-			$jumlah_user = DB::table('tbl_pegawai')
-								->where('tbl_pegawai.id',$user)
+			// $jumlah_user = DB::table('tbl_pegawai')
+			// 					->where('tbl_pegawai.id',$user)
+			// 					->count();
+			$jumlah_user = Pegawai::
+								where('rfid_id',$user)
 								->count();
 
 			//====> [2] Jika jumlah user sama dengan 0 atau tidak ada sama sekali pada database . 
@@ -112,9 +124,13 @@ class umumcontroller extends Controller
 				//====> karena hanya perlu satu data RFID pada table kartu  RFID , maka kita langsung -
 				//====> menghapus semua data pada tble dan siap di isi dengan yang baru . 
 				//====> Gunakan truncate().
-				DB::table('tbl_karturfid')->truncate();
+				// DB::table('tbl_karturfid')->truncate();
+				DB::table('rfids')->truncate();
 				//====> setelah itu simpan UID pada table RFID . 
-				DB::table('tbl_karturfid')->insert(
+				// DB::table('tbl_karturfid')->insert(
+				// 	['value' => $user ]
+				// );
+				DB::table('rfids')->insert(
 					['value' => $user ]
 				);
 				//====> [4] Kirim pesan balik ke wemos ESP8266 . 
@@ -129,8 +145,11 @@ class umumcontroller extends Controller
 			else{
 			
 				//====> yang pertama dilakukan adalah mengambil informasi data user pada database. 
-				$user = DB::table('tbl_pegawai')
-							->where('tbl_pegawai.id', $user )
+				// $user = DB::table('tbl_pegawai')
+				// 			->where('tbl_pegawai.id', $user )
+				// 			->get();
+				$user = Pegawai::
+							where('rfid_id', $user )
 							->get();
 				echo "[found_daftar".",".$user[0]->nama.",".$arr[1]  . ",0]";
 
@@ -145,16 +164,26 @@ class umumcontroller extends Controller
 			//==========> Jika dalam satu hari terdeteksi absen masuk , maka dinyatakan keluar.
 			//==========> pertama cek terlebih dahulu , apakah data UID telah terdaftar pada database.
 		
-			$jumlah_user = DB::table('tbl_pegawai')
-								->where('tbl_pegawai.id' , $user )
+			// $jumlah_user = DB::table('tbl_pegawai')
+			// 					->where('tbl_pegawai.id' , $user )
+			// 					->count();
+			// $user_ = DB::table('tbl_pegawai')
+			// 					->where('tbl_pegawai.id' , $user )
+			// 					->get();
+			$jumlah_user = Pegawai::
+								where('id' , $user )
 								->count();
-			$user_ = DB::table('tbl_pegawai')
-								->where('tbl_pegawai.id' , $user )
+			$user_ = Pegawai::
+								where('id' , $user )
 								->get();
 			//==========>
-			$jumlah_absensi = DB::table('tbl_absensi')
-								->where('tbl_absensi.idpegawai' , $user )
-								->where('tbl_absensi.tanggal' , $date )
+			// $jumlah_absensi = DB::table('tbl_absensi')
+			// 					->where('tbl_absensi.idpegawai' , $user )
+			// 					->where('tbl_absensi.tanggal' , $date )
+			// 					->count();
+			$jumlah_absensi = Absensi::
+								where('pegawai_id' , $user )
+								->where('tanggal' , $date )
 								->count();
 			//====> Jika user ditemukan pada database , maka lanjutkan ke proses absensi . 					
 			if( $jumlah_user > 0 ){
@@ -164,14 +193,22 @@ class umumcontroller extends Controller
 					//===> Pada proses penyimpanan data keterangan masuk ke database , set data/kolom jam masuk sesuai -
 					//===> jam sekarang dan kosongkan jam keluar . karena awalan kerja adalah masuk baru keluar . 
 					//===> sehingga jam keluar dikosongkan ,karena memang belum ada . 
-					$jam_masuk = '09';
+					$jam_masuk = '22';
 					if (date('H') == $jam_masuk) {
 						# code...
-						DB::table('tbl_absensi')->insert([
-							'idpegawai' => $user ,
+						// DB::table('tbl_absensi')->insert([
+						// 	'idpegawai' => $user ,
+						// 	'tanggal' =>date('y-m-d') ,
+						// 	'jam_hadir' => date('H:i:s') ,
+						// 	'jam_pulang' => '00:00:00'
+						// ]);
+						Absensi::insert([
+							
+							'pegawai_id' => $user ,
 							'tanggal' =>date('y-m-d') ,
+							'tanggal2'=>Carbon::now()->format('Y-m'),
 							'jam_hadir' => date('H:i:s') ,
-							'jam_pulang' => '00:00:00'
+							// 'jam_pulang' => '00:00:00'
 						]);
 						//===> kirim pesan pada wemos ESp82266 . bahwa absensi telah berhasil . 
 						//===> dengan parameter absen adalah masuk . informasi yang dikirim adalah-
@@ -189,9 +226,13 @@ class umumcontroller extends Controller
 					//===> dimana kita masuk.
 
 					//===> Sekarang ambil informasi absen hari ini dari database 
-					$db_res = DB::table('tbl_absensi')
-										->where('tbl_absensi.idpegawai' , $user )
-										->where('tbl_absensi.tanggal' , $date )
+					// $db_res = DB::table('tbl_absensi')
+					// 					->where('tbl_absensi.idpegawai' , $user )
+					// 					->where('tbl_absensi.tanggal' , $date )
+					// 					->get();
+					$db_res = Absensi::
+										where('pegawai_id' , $user )
+										->where('tanggal' , $date )
 										->get();
 					//==========>
 					//echo  'User:' . $id . ' , Tanggal : ' . $date  ;
@@ -221,16 +262,21 @@ class umumcontroller extends Controller
 					
 					//==========> Gunakan foreach untuk mengakses data jam pulang satu persatu dari data-
 					//==========> yang di temukan .
-					$jam_pulang = '18';
-					if (date('H') == $jam_pulang) {
+					$jam_pulang = '17';
+					if (date('H') == $jam_pulang || date('H') > $jam_pulang) {
 						# code...
 						foreach( $db_res as $value ){
 							//===> cek data per baris untuk kolomjam pulang dengan data 0:0:0
 							if ( (  strtotime($value->jam_pulang) ==  strtotime('00:00:00') ) == 1 ){
 								//===================================>
 								//===> Jika sudah di dapat , maka update data tersebut dengan data jam sekarang . 
-								DB::table('tbl_absensi')
-									->where('id' , $value->id )
+								// DB::table('tbl_absensi')
+								// 	->where('id' , $value->id )
+								// 	->update(array(
+								// 		'jam_pulang' => date('H:i:s')
+								// 	));
+								Absensi::
+									where('id' , $value->id )
 									->update(array(
 										'jam_pulang' => date('H:i:s')
 									));
@@ -258,19 +304,25 @@ class umumcontroller extends Controller
 	
 	public function page_potongan() {
 		//=================================>
-		$db_res = DB::select('select * from tbl_potongan');
+		// $db_res = DB::select('select * from tbl_potongan');
+		$db_res = Potongan::all();
         return view("page_potongan",['db_res'=>$db_res]);
 	}
 	
 	public function page_simpanpotongan(Request $request){
 		//=================================>
 		// insert data ke table potongan
-		DB::table('tbl_potongan')->insert([
+		// DB::table('tbl_potongan')->insert([
+		// 	'jenis' => $request->nama,
+		// 	'besar' => $this->hapusFormatRupiah( $request->nominal )
+		// ]);
+		Potongan::insert([
 			'jenis' => $request->nama,
 			'besar' => $this->hapusFormatRupiah( $request->nominal )
 		]);
 		//=================================>
-		$db_res = DB::table('tbl_potongan')->get();
+		// $db_res = DB::table('tbl_potongan')->get();
+		$db_res = Potongan::all();
         return view("page_potongan",['db_res'=>$db_res]);
 	}
 	
@@ -306,16 +358,18 @@ class umumcontroller extends Controller
 	
 	public function page_jabatan() {
 		//=================================>
-		$tunjangan = DB::table('tbl_tunjangan')->get();
-		$users = DB::table('tbl_jabatan')
-					->join('tbl_tunjangan', 'tbl_tunjangan.id', '=', 'tbl_jabatan.idtunjangan')
-					->select(
-						'tbl_jabatan.*' ,
-						'tbl_tunjangan.*' ,
-						'tbl_jabatan.id as idjabatan',
-						'tbl_tunjangan.id as idtunjangan'
-					)
-					->get();
+		// $tunjangan = DB::table('tbl_tunjangan')->get();
+		$tunjangan = Tunjangan::all();
+		// $users = DB::table('tbl_jabatan')
+		// 			->join('tbl_tunjangan', 'tbl_tunjangan.id', '=', 'tbl_jabatan.idtunjangan')
+		// 			->select(
+		// 				'tbl_jabatan.*' ,
+		// 				'tbl_tunjangan.*' ,
+		// 				'tbl_jabatan.id as idjabatan',
+		// 				'tbl_tunjangan.id as idtunjangan'
+		// 			)
+		// 			->get();
+		$users = Jabatan::all();
 		//=================================>
         return view('page_jabatan',
 			[
@@ -352,22 +406,29 @@ class umumcontroller extends Controller
 	public function page_simpanjabatan(Request $request){
 		//=================================>
 		// insert data ke table pegawai
-		DB::table('tbl_jabatan')->insert([
-			'idtunjangan' => $request->idpotongan,
+		// DB::table('tbl_jabatan')->insert([
+		// 	'idtunjangan' => $request->idpotongan,
+		// 	'jabatan' => $request->nama,
+		// 	'gajipokok' => $this->hapusFormatRupiah($request->nominal)
+		// ]);
+		Jabatan::insert([
+			'tunjangan_id' => $request->idpotongan,
 			'jabatan' => $request->nama,
 			'gajipokok' => $this->hapusFormatRupiah($request->nominal)
 		]);
 		//=================================>
-		$tunjangan = DB::select('select * from tbl_tunjangan');
-		$users = DB::table('tbl_jabatan')
-					->join('tbl_tunjangan', 'tbl_tunjangan.id', '=', 'tbl_jabatan.idtunjangan')
-					->select(
-						'tbl_jabatan.*' ,
-						'tbl_tunjangan.*' ,
-						'tbl_jabatan.id as idjabatan',
-						'tbl_tunjangan.id as idtunjangan'
-					)
-					->get();
+		// $tunjangan = DB::select('select * from tbl_tunjangan');
+		$tunjangan = Tunjangan::all();
+		// $users = DB::table('tbl_jabatan')
+		// 			->join('tbl_tunjangan', 'tbl_tunjangan.id', '=', 'tbl_jabatan.idtunjangan')
+		// 			->select(
+		// 				'tbl_jabatan.*' ,
+		// 				'tbl_tunjangan.*' ,
+		// 				'tbl_jabatan.id as idjabatan',
+		// 				'tbl_tunjangan.id as idtunjangan'
+		// 			)
+		// 			->get();
+		$users = Jabatan::all();
         return view('page_jabatan',
 			[
 				'users'=>$users ,
@@ -452,18 +513,24 @@ class umumcontroller extends Controller
 	
 	//=======================> Tunjangan <=========================//
 	public function page_tunjangan() {
-		$tb_result = DB::select('select * from  tbl_tunjangan');
+		// $tb_result = DB::select('select * from  tbl_tunjangan');
+		$tb_result = Tunjangan::all();
         return view('page_tunjangan',['tbl_tunjangan'=>$tb_result]);
 	}
 	
 	public function page_simpantunjangan(Request $request ){
 		// insert data ke table tunjangan
-		DB::table('tbl_tunjangan')->insert([
+		// DB::table('tbl_tunjangan')->insert([
+		// 	'jenis' => $request->jenis,
+		// 	'besar' => $this->hapusFormatRupiah( $request->besar )
+		// ]);
+		Tunjangan::insert([
 			'jenis' => $request->jenis,
 			'besar' => $this->hapusFormatRupiah( $request->besar )
 		]);
 		//===> Kembali ke halaman tunjangan .
-		$tb_result = DB::select('select * from  tbl_tunjangan');
+		// $tb_result = DB::select('select * from  tbl_tunjangan');
+		$tb_result = Tunjangan::all();
         return view('page_tunjangan',['tbl_tunjangan'=>$tb_result]);
 	}
 	
