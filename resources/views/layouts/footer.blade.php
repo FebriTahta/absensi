@@ -2,7 +2,7 @@
 <script src="{{ asset('assets/plugins/pace/pace.min.js') }}" type="text/javascript"></script>
 <!-- BEGIN JS DEPENDECENCIES-->
 {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"> --}}
-<script src="{{ asset('assets/plugins/jquery/jquery-1.11.3.min.js') }}" type="text/javascript"></script>
+{{-- <script src="{{ asset('assets/plugins/jquery/jquery-1.11.3.min.js') }}" type="text/javascript"></script> --}}
 <script src="{{ asset('assets/plugins/bootstrapv3/js/bootstrap.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/plugins/jquery-block-ui/jqueryblockui.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/plugins/jquery-unveil/jquery.unveil.min.js') }}" type="text/javascript"></script>
@@ -38,11 +38,7 @@
 <script src="{{ asset('assets/plugins/skycons/skycons.js') }}"></script>
 <!-- END PAGE LEVEL PLUGINS   -->
 <script src="{{ asset('assets/plugins/bootstrap-select2/select2.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('assets/plugins/jquery-datatable/js/jquery.dataTables.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('assets/plugins/jquery-datatable/extra/js/dataTables.tableTools.min.js') }}" type="text/javascript"></script>
-    <script type="text/javascript" src="{{ asset('assets/plugins/datatables-responsive/js/datatables.responsive.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('assets/plugins/datatables-responsive/js/lodash.min.js') }}"></script>
-{{-- <script src="{{asset('assets/js/datatables.js')}}" type="text/javascript"></script> --}}
+
 <!-- PAGE JS -->
 {{-- <script src="{{ asset('assets/js/dashboard.js') }}" type="text/javascript"></script> --}}
 

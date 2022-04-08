@@ -15,8 +15,8 @@ class TunjanganAdmin extends Controller
             $data   = Tunjangan::orderBy('id','desc');
             return DataTables::of($data)
                     ->addColumn('opsi', function($data){
-                        $actionBtn = ' <a type="button" class="btn btn-sm btn-info text-white" style="margin-bottom:10px; margin-right:10px;"><i class="fa fa-pencil"></i> UPDATE</a>';
-                        $actionBtn .= ' <a href="#" type="button" data-id="'.$data->id.'" data-toggle="modal" data-target="#modaldel" class="btn btn-sm btn-danger" ><i class="fa fa-trash"></i> REMOVE</a>';
+                        $actionBtn = ' <a type="button" class="btn btn-sm btn-info text-white" style="margin-bottom:10px; margin-right:10px;"><i class="fa fa-pencil"></i></a>';
+                        $actionBtn .= ' <a href="#" type="button" data-id="'.$data->id.'" data-toggle="modal" data-target="#modaldel" class="btn btn-sm btn-danger" ><i class="fa fa-trash"></i></a>';
                         return $actionBtn;
                     })
             ->rawColumns(['opsi'])
