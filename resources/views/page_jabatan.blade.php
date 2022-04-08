@@ -75,7 +75,9 @@
 										<option 
 											data-select2-id="31" 
 											value="{{ $tunjangan_item->id }}"
-										>{{ $tunjangan_item->jenis }}</option>
+										>
+										{{ $tunjangan_item->jenis }}
+										</option>
 									@endforeach
 								</select>
 							</div>
@@ -108,28 +110,32 @@
 							  <th>No</th>
 							  <th>Nama Jabatan</th>
 							  <th>Gaji Pokok</th>
-							  <th>Jenis Tunjangan</th>
+							  <!-- <th>Jenis Tunjangan</th> -->
 							  <th>Besar Tunjangan</th>
 							  <th>Aksi</th>
 							</tr>
 						  </thead>
 						  <tbody>
-							@foreach ($users as $index => $user)
+							
+						  @foreach ($users as $index => $user)
 							
 							<tr>
 							  <th>{{ $index +1 }}</th>
 							  <th>{{ $user->jabatan }}</th>
 							  <th>@currency( $user->gajipokok )</th>
-							  <th>{{ $user->tunjangan->jenis }}</th>
-							  <th>@currency( $user->tunjangan->besar )</th>
+							 	@if($user->tunjangan == null)
+								 <th>-</th>
+								 @else
+								 <th>@currency($user->tunjangan->besar)</th>
+								 @endif 
 							  <th>
 								<a 
-									href="/updatejabatan/{{$user->idjabatan}}"
+									href="/updatejabatan/{{$user->id}}"
 									type="submit" 
 									class="btn btn-primary"
 								>Update</a>
 								<a 
-									href="/deletejabatan/{{$user->idjabatan}}" 
+									href="/deletejabatan/{{$user->id}}" 
 									type="submit" class="btn btn-primary"
 								>Hapus</a>
 							  </th>

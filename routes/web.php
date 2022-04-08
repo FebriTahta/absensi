@@ -1,4 +1,8 @@
 <?php
+use App\Http\Controllers\DashboardAdmin;
+use App\Http\Controllers\JabatanAdmin;
+use App\Http\Controllers\TunjanganAdmin;
+use App\Http\Controllers\PegawaiAdmin;
 use App\Http\Middleware\checkrole;
 /*
 |--------------------------------------------------------------------------
@@ -65,8 +69,23 @@ Route::get('/total-jam-kerja/{pegawai_id}','PenggajianCont@total_jam_kerja');
 Route::get('/total-jam-lembur/{pegawai_id}','PenggajianCont@total_jam_lembur');
 Route::get('/total-potongan/{pegawai_id}','PenggajianCont@total_potongan');
 Route::get('/total-gajibersih/{pegawai_id}','PenggajianCont@total_gajibersih');
+Route::get('/total-tunjangan/{pegawai_id}','PenggajianCont@total_tunjangan');
+Route::get('/total-tunjangan2/{pegawai_id}','PenggajianCont@total_tunjangan2');
 
 Route::get('/total-jam-kerja2/{pegawai_id}','PenggajianCont@total_jam_kerja2');
 Route::get('/total-jam-lembur2/{pegawai_id}','PenggajianCont@total_jam_lembur2');
 Route::get('/total-potongan2/{pegawai_id}','PenggajianCont@total_potongan2');
 Route::get('/total-gajibersih2/{pegawai_id}','PenggajianCont@total_gajibersih2');
+
+Route::get('/cetak-slip','PenggajianCont@print')->name('print');
+
+// NEW TEMPLATE
+Route::get('/admin-dashboard', [DashboardAdmin::class,'page_dashboard'])->name('page_dashboard');
+
+Route::get('/admin-jabatan',[JabatanAdmin::class,'page_jabatan'])->name('page.jabatan');
+Route::post('/admin-jabatan-post',[JabatanAdmin::class,'post_jabatan'])->name('post.jabatan');
+
+Route::get('/admin-tunjangan',[TunjanganAdmin::class,'page_tunjangan'])->name('page.tunjangan');
+Route::post('/admin-tunjangan-post',[TunjanganAdmin::Class,'post_tunjangan'])->name('post.tunjangan');
+
+Route::get('/admin-pegawai',[PegawaiAdmin::class,'page_pegawai'])->name('page.pegawai');

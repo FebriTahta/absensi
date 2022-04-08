@@ -42,7 +42,7 @@
 						id="namajabatan" 
 						name="id" 
 						placeholder="Nama Jabatan"
-						value="{{ $jabatan[0]->idjabatan }}"
+            value="{{ $jabatan->id }}"
 						readonly="readonly"
 					>
                   </div>
@@ -54,7 +54,7 @@
 						id="namajabatan" 
 						name="nama" 
 						placeholder="Nama Jabatan"
-						value="{{ $jabatan[0]->jabatan }}"
+						value="{{ $jabatan->jabatan }}"
 					>
                   </div>
                   <div class="form-group">
@@ -67,7 +67,7 @@
 						placeholder="nominal gaji pokok"
             data-type='currency'
             jns='nominal'
-						value="@currency( $jabatan[0]->gajipokok )"
+            value="{{ $jabatan->gajipokok }}"
 					>
                   </div>
 				  <div class="form-group">
@@ -79,10 +79,13 @@
 							id="idalat"
 							name="tunjangan"
 						>
-							<option 
+            @if($jabatan->tunjangan !== null)
+            <option 
 									data-select2-id="31" 
-									value="{{ $jabatan[0]->idtunjangan }}"
-								>{{ $jabatan[0]->jenis }}</option>
+									value="{{ $jabatan->tunjangan->id }}"
+								>{{ $jabatan->tunjangan->jenis }} (@currency($jabatan->tunjangan->besar))</option>
+            @endif
+							
 							@foreach ($tunjangan as $index => $tunjangan_item)
 								<option 
 									data-select2-id="31" 

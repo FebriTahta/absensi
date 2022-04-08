@@ -37,6 +37,7 @@
                     <!-- form start -->
                     <div class="card-body">
                         <div class="row">
+                            @if($data->jabatan !== null)
                             <div class="form-group col-xl-12">
                                 <label for="">Nama Pegawai</label>
                                 <input type="text" value="{{$data->nama}}" class="form-control" readonly>
@@ -60,6 +61,8 @@
                                 
                             </div>
                             @endforeach
+                            @endif
+                            
                         </div>
                         
                     </div>
@@ -71,6 +74,7 @@
                     <div class="card-body">
 
                         <div class="row">
+                            @if($data->jabatan !== null)
                             <div class="form-group col-xl-6">
                                 <label for="">Gaji Kotor Tiap Bulan</label>
                                 <input type="text" value="@currency(($data->jabatan->gajipokok*8)*26)" class="form-control" readonly>
@@ -79,6 +83,7 @@
                                 <label for="">Gaji 1 Hari</label>
                                 <input type="text" value="@currency($data->jabatan->gajipokok*8)" class="form-control" readonly>
                             </div>
+                            @endif
                             
                         </div>
 
@@ -91,7 +96,9 @@
                         <div class="row">
                             <div class="form-group col-xl-12">
                                 <label for="">Gaji Bersih Tiap Bulan</label>
+                                @if($data->jabatan !== null)
                                 <input type="text" value="@currency(((($data->jabatan->gajipokok*8)*26)+$data->jabatan->tunjangan->besar) - $data->potongan->sum('besar'))" class="form-control" readonly>
+                                @endif
                             </div>
                             
                         </div>
@@ -149,6 +156,7 @@
                             
                             
                         </div>
+                        <form action="{{route('print')}}" method="get">@csrf
                         <div class="card-body">
                             <!-- <table id="tabel-gaji" class="table table-bordered data-table">
                                 <thead style="text-transform:uppercase">
@@ -159,30 +167,50 @@
                                 <tbody style="text-transform:uppercase">
                                 </tbody>
                             </table> -->
+                            
                             <p id="cb" style="display:none"></p>
-                            <div class="row">
+                            <div class="row" id="display detail">
                                 <div class="form-group col-xl-3">
                                     <label for="">TOTAL JAM KERJA</label>
                                     <p id="jamkerja">-</p>
+                                    <input type="hidden" name="jamkerja" id="jamkerja2" value="">
                                 </div>
                                 <div class="form-group col-xl-3">
                                     <label for="">TOTAL JAM LEMBUR</label>
                                     <p id="jamlembur">-</p>
+                                    <input type="hidden" name="jamlembur" id="jamlembur2" value="">
                                 </div>
                                 <div class="form-group col-xl-3">
                                     <label for="">TOTAL POTONGAN</label>
                                     <p id="totalpotongan">-</p>
+                                    <input type="hidden" name="totalpotongan" id="totalpotongan2" value="">
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label for="">TOTAL TUNJANGAN</label>
+                                    <p id="totaltunjangan">-</p>
+                                    <input type="hidden" name="totaltunjangan" id="totaltunjangan2" value="">
                                 </div>
                                 <div class="form-group col-xl-3">
                                     <label for="">TOTAL GAJI BERSIH</label>
                                     <p id="totalgajibersih">-</p>
+                                    <input type="hidden" name="totalgajibersih" id="totalgajibersih2" value="">
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" name="nama" value="{{$data->nama}}">
+                        <input type="hidden" name="jabatan" value="{{$data->jabatan->jabatan}}">
+                        <input type="hidden" name="tunjangan" value="{{$data->jabatan->tunjangan->jenis}} - @currency($data->jabatan->tunjangan->besar)">
+                        <button type="submit" target="_blank" class="btn btn-primary btn-rounded"><i class="fa fa-print"></i> CETAK</button>
+                        </form>
                     </div>
                 </div>
             </div>
             <!-- /.card -->
+            <div class="card">
+                <div class="card-body">
+                    
+                </div>
+            </div>
         </div>
 	
 	<input type="hidden" id="id" value="{{$data->id}}">
@@ -255,6 +283,18 @@ function load_data(dari = '', sampai = '')
                         data:{dari:dari, sampai:sampai},
                         success:function(data) {
                             document.getElementById('jamkerja').innerHTML = data;
+                            document.getElementById('jamkerja2').value = data;
+                            console.log(data);
+                        }
+                    });
+                    $.ajax({
+                        url:"/total-tunjangan/"+id,
+                        type: 'get',
+                        dataType: 'json',
+                        data:{dari:dari, sampai:sampai},
+                        success:function(data) {
+                            document.getElementById('totaltunjangan').innerHTML = data;
+                            document.getElementById('totaltunjangan2').value = data;
                             console.log(data);
                         }
                     });
@@ -265,6 +305,7 @@ function load_data(dari = '', sampai = '')
                         data:{dari:dari, sampai:sampai},
                         success:function(data) {
                             document.getElementById('jamlembur').innerHTML = data;
+                            document.getElementById('jamlembur2').value = data;
                             console.log(data);
                         }
                     });
@@ -275,6 +316,7 @@ function load_data(dari = '', sampai = '')
                         data:{dari:dari, sampai:sampai},
                         success:function(data) {
                             document.getElementById('totalpotongan').innerHTML = data;
+                            document.getElementById('totalpotongan2').value = data;
                             console.log(data);
                         }
                     });
@@ -285,9 +327,11 @@ function load_data(dari = '', sampai = '')
                         data:{dari:dari, sampai:sampai},
                         success:function(data) {
                             document.getElementById('totalgajibersih').innerHTML = data;
+                            document.getElementById('totalgajibersih2').value = data;
                             console.log(data);
                         }
                     });
+                    
                 }
 
                 function load_data2(dari2 = '', sampai2 = '')
@@ -316,26 +360,30 @@ function load_data(dari = '', sampai = '')
                         data:{dari2:dari2, sampai2:sampai2},
                         success:function(data) {
                             document.getElementById('cb').innerHTML = data;
+                            // document.getElementById("bulanan").style.display = "none";
+                            document.getElementById('jamkerja').innerHTML = data;
+                            document.getElementById('jamkerja2').value = data;
                             console.log(data);
                         }
                     });
-                    $.ajax({
-                        url:"/detail-gaji-pegawai2/"+id,
-                        type: 'get',
-                        dataType: 'json',
-                        data:{dari2:dari2, sampai2:sampai2},
-                        success:function(data) {
-                            document.getElementById('cb').innerHTML = data;
-                            console.log(data);
-                        }
-                    });
+                    // $.ajax({
+                    //     url:"/detail-gaji-pegawai2/"+id,
+                    //     type: 'get',
+                    //     dataType: 'json',
+                    //     data:{dari2:dari2, sampai2:sampai2},
+                    //     success:function(data) {
+                    //         document.getElementById('cb').innerHTML = data;
+                    //         console.log(data);
+                    //     }
+                    // });
                     $.ajax({
                         url:"/total-jam-kerja2/"+id,
                         type: 'get',
                         dataType: 'json',
                         data:{dari2:dari2, sampai2:sampai2},
                         success:function(data) {
-                            document.getElementById('jamkerja').innerHTML = data;
+                            document.getElementById('jamkerja2').innerHTML = data;
+                            document.getElementById('jamkerja2').value = data;
                             console.log(data);
                         }
                     });
@@ -346,6 +394,7 @@ function load_data(dari = '', sampai = '')
                         data:{dari2:dari2, sampai2:sampai2},
                         success:function(data) {
                             document.getElementById('jamlembur').innerHTML = data;
+                            document.getElementById('jamlembur2').value = data;
                             console.log(data);
                         }
                     });
@@ -356,9 +405,23 @@ function load_data(dari = '', sampai = '')
                         data:{dari2:dari2, sampai2:sampai2},
                         success:function(data) {
                             document.getElementById('totalpotongan').innerHTML = data;
+                            document.getElementById('totalpotongan2').value = data;
                             console.log(data);
                         }
                     });
+
+                    $.ajax({
+                        url:"/total-tunjangan2/"+id,
+                        type: 'get',
+                        dataType: 'json',
+                        data:{dari2:dari2, sampai2:sampai2},
+                        success:function(data) {
+                            document.getElementById('totaltunjangan').innerHTML = data;
+                            document.getElementById('totaltunjangan2').value = data;
+                            console.log('tunjangan');
+                        }
+                    });
+                    
                     $.ajax({
                         url:"/total-gajibersih2/"+id,
                         type: 'get',
@@ -366,6 +429,7 @@ function load_data(dari = '', sampai = '')
                         data:{dari2:dari2, sampai2:sampai2},
                         success:function(data) {
                             document.getElementById('totalgajibersih').innerHTML = data;
+                            document.getElementById('totalgajibersih2').value = data;
                             console.log(data);
                         }
                     });
@@ -384,12 +448,6 @@ function load_data(dari = '', sampai = '')
                     }
                 });
 
-                $('#refresh').click(function(){
-                    $('#dari').val('');
-                    $('#sampai').val('');
-                    load_data();
-                });
-
                 $('#filter2').click(function(){
                     var dari2 = $('#dari2').val();
                     var sampai2 = $('#sampai2').val();
@@ -401,6 +459,12 @@ function load_data(dari = '', sampai = '')
                     {
                         alert('Both Date is required');
                     }
+                });
+
+                $('#refresh').click(function(){
+                    $('#dari').val('');
+                    $('#sampai').val('');
+                    load_data();
                 });
 
                 $('#refresh2').click(function(){

@@ -46,7 +46,8 @@
                   <div class="form-group">
                     <div class="form-group">
                         <label>Nama Pegawai</label>
-                        <select class="form-control" id="nama" name="idpegawai">
+                        <select class="form-control" id="nama" name="idpegawai" required>
+							<option value="">- pilih pegawai -</option>
 							@foreach ($users as $index => $userpegawai)
 								<option 
 									data-select2-id="31" 
@@ -65,7 +66,7 @@
 								id="tgl_awal"
 								name="tgl_awal"
 								autocomplete="off"
-								>
+								required>
 								<div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
 									<div class="input-group-text"><i class="fa fa-calendar"></i></div>
 								</div>
@@ -80,7 +81,7 @@
 								id="tgl_akhir"
 								name="tgl_akhir"
 								autocomplete="off"
-								>
+								required>
 								<div class="input-group-append" data-target="#reservationdate1" data-toggle="datetimepicker">
 									<div class="input-group-text"><i class="fa fa-calendar"></i></div>
 								</div>
@@ -144,8 +145,17 @@
 								  <th>{{ $item_absensi->pegawai->id }}</th>
 								  <th>{{ $item_absensi->pegawai->nama }}</th>
 								  <th>{{ $item_absensi->tanggal }}</th>
+								  @if($item_absensi->jam_hadir !== null)
 								  <th>{{ Carbon\Carbon::parse($item_absensi->jam_hadir)->format('H:i:s') }}</th>
-								  <th>{{ Carbon\Carbon::parse($item_absensi->jam_pulang)->format('H:i:s') }}</th>
+								  @else
+								  <th>Belum Absen</th>
+								  @endif 
+								  
+								  @if($item_absensi->jam_pulang !== null)
+								  <th>{{ Carbon\Carbon::parse($item_absensi->jam_pulang)->format('H:i:s') }}</th> 
+								  @else
+								  <th>Belum Absen</th>
+								  @endif 
 								 
 								</tr>
 								@endforeach

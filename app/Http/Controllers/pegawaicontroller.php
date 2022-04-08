@@ -50,16 +50,48 @@ class pegawaicontroller extends Controller
 		// 	'alamat' => $request->alamat ,
 		// 	'telp' => $request->telp 
 		// ]);
-		Pegawai::insert([
-			'id' => $request->id ,
-			'rfid_id' => $request->id ,
-			'jabatan_id' => $request->idjabatan ,
-			'nama' => $request->nama ,
-			'tgl' => $request->tgl ,
-			'ttl' => $request->ttl ,
-			'alamat' => $request->alamat ,
-			'telp' => $request->telp 
-		]);
+		$ada = Pegawai::where('id',$request->id)->first();
+		if ($ada == null) {
+			# code...
+			Pegawai::insert([
+				'id' => $request->id ,
+				'rfid_id' => $request->id ,
+				'jabatan_id' => $request->idjabatan ,
+				'nama' => $request->nama ,
+				'tgl' => $request->tgl ,
+				'ttl' => $request->ttl ,
+				'alamat' => $request->alamat ,
+				'telp' => $request->telp 
+			]);
+
+			$num = $request->counter ;
+			for( $i = 0 ; $i <= (int)$num ; $i++ ){
+				//===> cek jika TAG ada .
+				$stat_ele = $request->input("jenispotongan-".$i ) !== null ;
+				if( $stat_ele == true ){
+					pegawai_potongan::insert([
+						'pegawai_id' => $request->id ,
+						'potongan_id' => $request->input("jenispotongan-".$i )
+					]);
+				}
+			}
+
+			$jabatan = Jabatan::all();
+			// $potongan = DB::table('tbl_potongan')->get();
+			$potongan = Potongan::all();
+
+			$users = Pegawai::all();
+			return view('page_daftar',
+				[
+					'users'=>$users	,
+					'jabatan'=>$jabatan	,
+					'potongan' => $potongan 
+				]
+			);
+		}else{
+			return redirect()->back();
+		}
+		
 		//===============================> insert data ke potongan pegawai .
 		//===> ambil informasi jumlah counter .
 		// $num = $request->counter ;
@@ -73,22 +105,10 @@ class pegawaicontroller extends Controller
 		// 		]);
 		// 	}
 		// }
-		$num = $request->counter ;
-		for( $i = 0 ; $i <= (int)$num ; $i++ ){
-			//===> cek jika TAG ada .
-			$stat_ele = $request->input("jenispotongan-".$i ) !== null ;
-			if( $stat_ele == true ){
-				pegawai_potongan::insert([
-					'pegawai_id' => $request->id ,
-					'potongan_id' => $request->input("jenispotongan-".$i )
-				]);
-			}
-		}
+		
 		//===============================>
 		// $jabatan = DB::table('tbl_jabatan')->get();
-		$jabatan = Jabatan::all();
-		// $potongan = DB::table('tbl_potongan')->get();
-		$potongan = Potongan::all();
+		
 		//===============================>
 		// $users = DB::table('tbl_pegawai')
 		// 			->join('tbl_jabatan', 'tbl_pegawai.idjabatan', '=', 'tbl_jabatan.id')
@@ -97,6 +117,25 @@ class pegawaicontroller extends Controller
 		// 				'tbl_jabatan.*' ,
 		// 				'tbl_pegawai.id as idpegawai' ,
 		// 				'tbl_jabatan.id as idjabatan'
+		// 			)
+		// 			->get();
+		
+	}
+	
+	public function page_deletepegawai( $id ){
+		DB::table('pegawais')->where('id', '=', $id)->delete();
+		pegawai_potongan::where('id', '=', $id)->delete();
+		//===============================>
+		$jabatan = DB::table('jabatans')->get();
+		$potongan = DB::table('potongans')->get();
+		//===============================>
+		// $users = DB::table('pegawais')
+		// 			->join('jabatans', 'pegawais.jabatan_id', '=', 'jabatans.id')
+		// 			->select(
+		// 				'pegawais.*' ,
+		// 				'jabatans.*' ,
+		// 				'pegawais.id as pegawai_id' ,
+		// 				'jabatans.id as jabatan_id'
 		// 			)
 		// 			->get();
 		$users = Pegawai::all();
@@ -109,80 +148,60 @@ class pegawaicontroller extends Controller
 		);
 	}
 	
-	public function page_deletepegawai( $id ){
-		DB::table('tbl_pegawai')->where('id', '=', $id)->delete();
-		DB::table('tbl_datapotongankaryawan')->where('idpegawai', '=', $id)->delete();
-		//===============================>
-		$jabatan = DB::table('tbl_jabatan')->get();
-		$potongan = DB::table('tbl_potongan')->get();
-		//===============================>
-		$users = DB::table('tbl_pegawai')
-					->join('tbl_jabatan', 'tbl_pegawai.idjabatan', '=', 'tbl_jabatan.id')
-					->select(
-						'tbl_pegawai.*' ,
-						'tbl_jabatan.*' ,
-						'tbl_pegawai.id as idpegawai' ,
-						'tbl_jabatan.id as idjabatan'
-					)
-					->get();
-        return view('page_daftar',
-			[
-				'users'=>$users	,
-				'jabatan'=>$jabatan	,
-				'potongan' => $potongan 
-			]
-		);
-	}
-	
 	public function page_updatepegawai( $id ){
-		$users = DB::table('tbl_pegawai')
-					->join('tbl_jabatan', 'tbl_pegawai.idjabatan', '=', 'tbl_jabatan.id')
-					->select(
-						'tbl_pegawai.*' ,
-						'tbl_jabatan.*' ,
-						'tbl_pegawai.id as idpegawai' ,
-						'tbl_jabatan.id as idjabatan'
-					)
-					->where('tbl_pegawai.id' , $id )
-					->get();
+		// $users = DB::table('tbl_pegawai')
+		// 			->join('tbl_jabatan', 'tbl_pegawai.idjabatan', '=', 'tbl_jabatan.id')
+		// 			->select(
+		// 				'tbl_pegawai.*' ,
+		// 				'tbl_jabatan.*' ,
+		// 				'tbl_pegawai.id as idpegawai' ,
+		// 				'tbl_jabatan.id as idjabatan'
+		// 			)
+		// 			->where('tbl_pegawai.id' , $id )
+		// 			->get();
+		// $users = Pegawai::where('id',$id)->first();
+		$users = Pegawai::where('id',$id)->first();
 		//===============================>
-		$jabatan = DB::table('tbl_jabatan')->get();
-		$potongan = DB::table('tbl_potongan')->get();
+		$jabatan = DB::table('jabatans')->get();
+		$potongan = DB::table('potongans')->get();
 
         return view('page_update_pegawai',
 			[
 				'users'=>$users	,
-				'jabatan'=>$jabatan	
+				'jabatan'=>$jabatan,
+				'potongan'=>$potongan	
 			]
 		);
 	}
 	
 	public function page_updateitempegawai( Request $request ){
 		// update data ke table potongan
-		DB::table('tbl_pegawai')
-			->where('id' , $request->id )
-			->update(array(
-				'idjabatan' => $request->idjabatan ,
+		Pegawai::where('id', $request->id)->update(
+			[
+				'jabatan_id' => $request->idjabatan ,
 				'nama' => $request->nama ,
 				'tgl' => $request->tgl ,
 				'ttl' => $request->ttl ,
 				'alamat' => $request->alamat ,
 				'telp' => $request->telp 
-			));
-			
+			]
+		);
 		//===============================>
-		$jabatan = DB::table('tbl_jabatan')->get();
-		$potongan = DB::table('tbl_potongan')->get();
+		$jabatan = DB::table('jabatans')->get();
+		$potongan = DB::table('potongans')->get();
 		//===============================>
-		$users = DB::table('tbl_pegawai')
-					->join('tbl_jabatan', 'tbl_pegawai.idjabatan', '=', 'tbl_jabatan.id')
-					->select(
-						'tbl_pegawai.*' ,
-						'tbl_jabatan.*' ,
-						'tbl_pegawai.id as idpegawai' ,
-						'tbl_jabatan.id as idjabatan'
-					)
-					->get();
+		// $users = DB::table('tbl_pegawai')
+		// 			->join('tbl_jabatan', 'tbl_pegawai.idjabatan', '=', 'tbl_jabatan.id')
+		// 			->select(
+		// 				'tbl_pegawai.*' ,
+		// 				'tbl_jabatan.*' ,
+		// 				'tbl_pegawai.id as idpegawai' ,
+		// 				'tbl_jabatan.id as idjabatan'
+		// 			)
+		// 			->get();
+		$users = Pegawai::all();
+
+		
         return view('page_daftar',
 			[
 				'users'		=>	$users		,	
@@ -225,6 +244,7 @@ class pegawaicontroller extends Controller
 	
 	public function page_cari_data_absensi( Request $request){
 		//===============================> ambil informasi get .
+		
 		$idpegawai = $request->idpegawai ;
 		$tgl_awal = $request->tgl_awal ;
 		$tgl_akhir = $request->tgl_akhir ;

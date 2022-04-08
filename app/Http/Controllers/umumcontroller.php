@@ -175,7 +175,7 @@ class umumcontroller extends Controller
 								->count();
 			$user_ = Pegawai::
 								where('id' , $user )
-								->get();
+								->first();
 			//==========>
 			// $jumlah_absensi = DB::table('tbl_absensi')
 			// 					->where('tbl_absensi.idpegawai' , $user )
@@ -193,7 +193,7 @@ class umumcontroller extends Controller
 					//===> Pada proses penyimpanan data keterangan masuk ke database , set data/kolom jam masuk sesuai -
 					//===> jam sekarang dan kosongkan jam keluar . karena awalan kerja adalah masuk baru keluar . 
 					//===> sehingga jam keluar dikosongkan ,karena memang belum ada . 
-					$jam_masuk = '22';
+					$jam_masuk = '21';
 					if (date('H') == $jam_masuk) {
 						# code...
 						// DB::table('tbl_absensi')->insert([
@@ -213,7 +213,7 @@ class umumcontroller extends Controller
 						//===> kirim pesan pada wemos ESp82266 . bahwa absensi telah berhasil . 
 						//===> dengan parameter absen adalah masuk . informasi yang dikirim adalah-
 						//===> perintah "success_absen" . nama pengguna . parameter absen masuk . 
-						echo "[success_absen" . "," . $user_[0]->nama . ' ,masuk' . ",0]" ;
+						echo "[success_absen" . "," . $user_->nama . ' ,masuk' . ",0]" ;
 					}else{
 						echo "[belum_waktu_absen,0]";
 					}
@@ -262,36 +262,45 @@ class umumcontroller extends Controller
 					
 					//==========> Gunakan foreach untuk mengakses data jam pulang satu persatu dari data-
 					//==========> yang di temukan .
-					$jam_pulang = '17';
-					if (date('H') == $jam_pulang || date('H') > $jam_pulang) {
+					$jam_pulang = '21';
+					$gohome = Absensi::where('pegawai_id' , $user )->where('tanggal' , $date )->first();
+					if ($gohome->jam_pulang == null) {
 						# code...
-						foreach( $db_res as $value ){
-							//===> cek data per baris untuk kolomjam pulang dengan data 0:0:0
-							if ( (  strtotime($value->jam_pulang) ==  strtotime('00:00:00') ) == 1 ){
-								//===================================>
-								//===> Jika sudah di dapat , maka update data tersebut dengan data jam sekarang . 
-								// DB::table('tbl_absensi')
-								// 	->where('id' , $value->id )
-								// 	->update(array(
-								// 		'jam_pulang' => date('H:i:s')
-								// 	));
+						if (date('H') == $jam_pulang || date('H') > $jam_pulang) {
+							# code...
+							foreach( $db_res as $value ){
+								//===> cek data per baris untuk kolomjam pulang dengan data 0:0:0
+								// if ( (  strtotime($value->jam_pulang) ==  strtotime('00:00:00') ) == 1 ){
+								// 	//===================================>
+								// 	//===> Jika sudah di dapat , maka update data tersebut dengan data jam sekarang . 
+								// 	// DB::table('tbl_absensi')
+								// 	// 	->where('id' , $value->id )
+								// 	// 	->update(array(
+								// 	// 		'jam_pulang' => date('H:i:s')
+								// 	// 	));
+								// }
 								Absensi::
-									where('id' , $value->id )
-									->update(array(
-										'jam_pulang' => date('H:i:s')
-									));
-								//===> set false "cekAbsenComplete" untuk menandakan user sedang absen keluar.
+										where('id' , $value->id )
+										->update(array(
+											'jam_pulang' => date('H:i:s')
+										));
+									//===> set false "cekAbsenComplete" untuk menandakan user sedang absen keluar.
 								$cekAbsenComplete = false ;
 							}
-						}
-						if( $cekAbsenComplete == false ){
-							echo "[success_absen" ."," . $user_[0]->nama . ",pulang"  . ",0]";
+						
+							if( $cekAbsenComplete == false ){
+								echo "[success_absen" ."," . $user_->nama . ",pulang"  . ",0]";
+							}else{
+								echo "[success_absen" ."," . $user_->nama . ",Sudah Absen"  . ",0]";
+							}
 						}else{
-							echo "[success_absen" ."," . $user_[0]->nama . ",Sudah Absen"  . ",0]";
+							echo "[belum_waktu_absen_pulang,0]";
 						}
-					}else{
-						echo "[belum_waktu_absen_pulang,0]";
+					}else {
+						# code...
+						echo "[success_absen" ."," . $user_->nama . ",Sudah Absen"  . ",0]";
 					}
+					
 				}
 			}else{
 				echo "[notfound,0]" ;
@@ -327,29 +336,29 @@ class umumcontroller extends Controller
 	}
 	
 	public function page_updatepotongan($id){
-		$potongan = DB::table('tbl_potongan')->where('id' , $id)->get();
+		$potongan = DB::table('potongans')->where('id' , $id)->get();
         return view('page_update_potongan',['potongan'=>$potongan]);
 	}
 	
 	public function page_updateitempotongan(Request $request ){
 	
 		// update data ke table potongan
-		DB::table('tbl_potongan')
+		DB::table('potongans')
 			->where('id' , $request->id )
 			->update(array(
 				'jenis' => $request->jenis ,
 				'besar' => $this->hapusFormatRupiah( $request->besar )
 			));
 		//===> Kembali ke halaman tunjangan .
-		$db_res = DB::table('tbl_potongan')->get();
+		$db_res = DB::table('potongans')->get();
         return view("page_potongan",['db_res'=>$db_res]);
 	}
 	
 	public function page_hapuspotongan( $id ){
 		//==> Hapus data tunjangan .
-		DB::table('tbl_potongan')->where('id', '=', $id)->delete();
+		DB::table('potongans')->where('id', '=', $id)->delete();
 		//=================================>
-		$db_res = DB::table('tbl_potongan')->get();
+		$db_res = DB::table('potongans')->get();
         return view("page_potongan",['db_res'=>$db_res]);
 	}
 	
@@ -369,7 +378,7 @@ class umumcontroller extends Controller
 		// 				'tbl_tunjangan.id as idtunjangan'
 		// 			)
 		// 			->get();
-		$users = Jabatan::all();
+		$users = Jabatan::with('tunjangan')->get();
 		//=================================>
         return view('page_jabatan',
 			[
@@ -381,16 +390,16 @@ class umumcontroller extends Controller
 	
 	public function page_hapusjabatan($id) {
 		//=================================>
-		DB::table('tbl_jabatan')->where('id', '=', $id)->delete();
+		DB::table('jabatans')->where('id', '=', $id)->delete();
 		//=================================>
-		$tunjangan = DB::table('tbl_tunjangan')->get();
-		$users = DB::table('tbl_jabatan')
-					->join('tbl_tunjangan', 'tbl_tunjangan.id', '=', 'tbl_jabatan.idtunjangan')
+		$tunjangan = DB::table('tunjangans')->get();
+		$users = DB::table('jabatans')
+					->join('tunjangans', 'tunjangans.id', '=', 'jabatans.id')
 					->select(
-						'tbl_jabatan.*' ,
-						'tbl_tunjangan.*' ,
-						'tbl_jabatan.id as idjabatan',
-						'tbl_tunjangan.id as idtunjangan'
+						'jabatans.*' ,
+						'tunjangans.*' ,
+						'jabatans.id as id',
+						'tunjangans.id as id'
 					)
 					->get();
 		//=================================>
@@ -400,6 +409,7 @@ class umumcontroller extends Controller
 				'tunjangan'=>$tunjangan
 			]
 		);
+		// return redirect()->back();
 	}
 	
 	
@@ -441,66 +451,74 @@ class umumcontroller extends Controller
 	//==> Fungsi kode programcontroller untuk mendaa
 	public function page_updatejabatan($id){
 		//=================================>
-		$tunjangan = DB::table('tbl_tunjangan')->get();
-		$jabatan = DB::table('tbl_jabatan')
-					->join('tbl_tunjangan', 'tbl_tunjangan.id', '=', 'tbl_jabatan.idtunjangan')
-					->select(
-							'tbl_jabatan.*',
-							'tbl_tunjangan.*',
-							'tbl_tunjangan.id as idtunjangan',
-							'tbl_jabatan.id as idjabatan'
-						)
-					->where('tbl_jabatan.id' , $id)
-					->get();
-		if(  isset( $jabatan[0]->idtunjangan ) == 1 ){
-			return view('page_update_jabatan',
+		$tunjangan = DB::table('tunjangans')->get();
+		// $jabatan = DB::table('jabatans')
+		// 			->join('tunjangans', 'tunjangans.id', '=', 'jabatans.tunjangan_id')
+		// 			->select(
+		// 					'jabatans.*',
+		// 					'tunjangans.*',
+		// 					'tunjangans.id as idtunjangan',
+		// 					'jabatans.id as idjabatan'
+		// 				)
+		// 			->where('jabatans.id' , $id)
+		// 			->get();
+		$jabatan = Jabatan::where('id',$id)->first();
+		return view('page_update_jabatan',
 				[
 					'jabatan'=>$jabatan ,
 					'tunjangan' => $tunjangan
 				]
 			);
-		}else{
+		// if(  isset( $jabatan[0]->tunjangan_id ) == 1 ){
+		// 	return view('page_update_jabatan',
+		// 		[
+		// 			'jabatan'=>$jabatan ,
+		// 			'tunjangan' => $tunjangan
+		// 		]
+		// 	);
+		// }else{
 			
-			$users = DB::table('tbl_jabatan')
-					->join('tbl_tunjangan', 'tbl_tunjangan.id', '=', 'tbl_jabatan.idtunjangan')
-					->select(
-						'tbl_jabatan.*' ,
-						'tbl_tunjangan.*' ,
-						'tbl_jabatan.id as idjabatan',
-						'tbl_tunjangan.id as idtunjangan'
-					)
-					->get();
-			//=================================>
-			return view('page_jabatan',
-				[
-					'users'=>$users ,
-					'tunjangan'=>$tunjangan ,
-					'notfound' => 1
-				]
-			);
-		}
+		// 	$users = DB::table('jabatans')
+		// 			->join('tunjangans', 'tunjangans.id', '=', 'jabatans.tunjangan_id')
+		// 			->select(
+		// 				'jabatans.*' ,
+		// 				'tunjangans.*' ,
+		// 				'jabatans.id as idjabatan',
+		// 				'tunjangans.id as idtunjangan'
+		// 			)
+		// 			->get();
+		// 	//=================================>
+		// 	return view('page_jabatan',
+		// 		[
+		// 			'users'=>$users ,
+		// 			'tunjangan'=>$tunjangan ,
+		// 			'notfound' => 1
+		// 		]
+		// 	);
+		// }
 	}
 	
 	public function page_updateitemjabatan(Request $request){
 		// insert data ke table pegawai
-		DB::table('tbl_jabatan')
+		DB::table('jabatans')
 			->where('id' , $request->id )
 			->update(array(
 				'jabatan' => $request->nama ,
 				'gajipokok' => $this->hapusFormatRupiah( $request->nominal ),
-				'idtunjangan' => $request->tunjangan
+				'tunjangan_id' => $request->tunjangan
 			));
 		//=================================>
-		$tunjangan = DB::table('tbl_tunjangan')->get();
-		$users = DB::table('tbl_jabatan')
-					->join('tbl_tunjangan', 'tbl_tunjangan.id', '=', 'tbl_jabatan.idtunjangan')
-					->select(
-						'tbl_jabatan.*' ,
-						'tbl_tunjangan.*' ,
-						'tbl_jabatan.id as idjabatan',
-						'tbl_tunjangan.id as idtunjangan'
-					)
-					->get();
+		$tunjangan = DB::table('tunjangans')->get();
+		// $users = DB::table('jabatans')
+		// 			->join('jabatans', 'tunjangans.id', '=', 'jabatans.tunjangan_id')
+		// 			->select(
+		// 				'jabatans.*' ,
+		// 				'tunjangans.*' ,
+		// 				'jabatans.id as idjabatan',
+		// 				'tunjangans.id as idtunjangan'
+		// 			)
+		// 			->get();
+		$users = Jabatan::all();
 		//=================================>
         return view('page_jabatan',
 			[
@@ -514,8 +532,8 @@ class umumcontroller extends Controller
 	//=======================> Tunjangan <=========================//
 	public function page_tunjangan() {
 		// $tb_result = DB::select('select * from  tbl_tunjangan');
-		$tb_result = Tunjangan::all();
-        return view('page_tunjangan',['tbl_tunjangan'=>$tb_result]);
+		$tbl_tunjangan = Tunjangan::all();
+        return view('page_tunjangan',['tbl_tunjangan'=>$tbl_tunjangan]);
 	}
 	
 	public function page_simpantunjangan(Request $request ){
@@ -530,34 +548,35 @@ class umumcontroller extends Controller
 		]);
 		//===> Kembali ke halaman tunjangan .
 		// $tb_result = DB::select('select * from  tbl_tunjangan');
-		$tb_result = Tunjangan::all();
-        return view('page_tunjangan',['tbl_tunjangan'=>$tb_result]);
+		$tbl_tunjangan = Tunjangan::all();
+        return view('page_tunjangan',['tbl_tunjangan'=>$tbl_tunjangan]);
 	}
 	
 	public function page_deletetunjangan($id){
 		//==> Hapus data tunjangan .
-		DB::table('tbl_tunjangan')->where('id', '=', $id)->delete();
+		$tun = DB::table('tunjangans')->where('id', '=', $id)->delete();
+		
 		//===> Kembali ke halaman tunjangan .
-		$tb_result = DB::select('select * from  tbl_tunjangan');
-        return view('page_tunjangan',['tbl_tunjangan'=>$tb_result]);
+		$tbl_tunjangan = DB::select('select * from tunjangans');
+        return view('page_tunjangan',['tbl_tunjangan'=>$tbl_tunjangan]);
 	}
 	
 	public function page_updatetunjangan($id){
-		$tunjangan = DB::table('tbl_tunjangan')->where('id' , $id)->get();
+		$tunjangan = Tunjangan::where('id' , $id)->get();
         return view('page_update_tunjangan',['tunjangan'=>$tunjangan]);
 	}
 	
 	public function page_updateitemtunjangan(Request $request ){
 		// insert data ke table pegawai
-		DB::table('tbl_tunjangan')
+		DB::table('tunjangans')
 			->where('id' , $request->id )
 			->update(array(
 				'jenis' => $request->jenis ,
 				'besar' => $this->hapusFormatRupiah(  $request->besar )
 			));
 		//===> Kembali ke halaman tunjangan .
-		$tb_result = DB::select('select * from  tbl_tunjangan');
-        return view('page_tunjangan',['tbl_tunjangan'=>$tb_result]);
+		$tbl_tunjangan = DB::select('select * from  tunjangans');
+        return view('page_tunjangan',['tbl_tunjangan'=>$tbl_tunjangan]);
 	}
 	
 }

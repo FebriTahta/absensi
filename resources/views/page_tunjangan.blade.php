@@ -84,6 +84,13 @@ $(document).ready(function(){
 
 
 <div class="container-fluid">
+@if (\Session::has('notis'))
+    <div class="alert alert-danger">
+        <ul>
+            <li>{!! \Session::get('notis') !!}</li>
+        </ul>
+    </div>
+@endif
 	<div class="row">
 		<div class="col-lg-12" id="content-table">
 			<!-- DataTales Example -->

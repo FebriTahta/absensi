@@ -90,12 +90,14 @@
 							class="custom-select"
 							name="idjabatan"
 						>
-                          @foreach ($jabatan as $index => $jabatan_item)
+						@if($jabatan->count() !== 0)
+						@foreach ($jabatan as $index => $jabatan_item)
 								<option 
 									data-select2-id="31" 
 									value="{{ $jabatan_item->id }}"
 								>{{ $jabatan_item->jabatan }}</option>
 							@endforeach
+						@endif
                         </select>
                     </div>
 				    <div class="form-group" id="potongan-gaji-1">
@@ -105,12 +107,14 @@
 								class="custom-select col-md-6"
 								name="jenispotongan-0"
 							>
-								@foreach ($potongan as $key => $potongan_item)
+							@if($potongan->count() !== 0)
+							@foreach ($potongan as $key => $potongan_item)
 									<option 
 										data-select2-id="31" 
-										value="{{ $jabatan_item->id }}"
+										value="{{ $potongan_item->id }}"
 									>{{ $potongan_item->jenis }}</option>
 								@endforeach
+							@endif
 							</select>
 							<div class="col-md-2"></div>
 							<div class="text-right">
@@ -194,17 +198,22 @@
 							<tr>
 							  <th>{{ $index +1 }}</th>
 							  <th>{{  $user->nama }}</th>
-							  <th>{{  $user->jabatan->jabatan }}</th>
+							  @if($user->jabatan !== null)
+							  <th>{{  $user->jabatan->jabatan }}</th> 
+							  @else 
+							  <th>-</th>
+							  @endif
+							  
 							  <th>{{  $user->alamat }}</th>
 							  <th>{{  $user->telp }}</th>
 							  <th>
 								<a 
-									href="/updatepegawai/{{$user->idpegawai}}"
+									href="/updatepegawai/{{$user->id}}"
 									type="submit" 
 									class="btn btn-primary"
 								>Update</a>
 								<a 
-									href="/deletepegawai/{{$user->idpegawai}}" 
+									href="/deletepegawai/{{$user->id}}" 
 									type="submit" class="btn btn-primary"
 								>Hapus</a>
 							  </th>

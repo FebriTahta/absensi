@@ -42,8 +42,8 @@
 						placeholder="ID Pegawai"
 						autocomplete="off"
 						name="id"
-						value="{{ $users[0]->idpegawai }}"
-					>
+						value="{{ $users->id }}"
+					readonly>
                   </div>
                   <div class="form-group">
                     <label for="namauser">Nama </label>
@@ -54,7 +54,7 @@
 						placeholder="Nama Pegawai"
 						autocomplete="off"
 						name="nama"
-						value="{{ $users[0]->nama }}"
+						value="{{ $users->nama }}"
 					>
                   </div>
 				  <div class="form-group">
@@ -66,7 +66,7 @@
 							data-target="#dateawal" 
 							id="tgl-awal"
 							name="tgl"
-							value="{{ $users[0]->tgl }}"
+							value="{{ $users->tgl }}"
 						>
 								<div class="input-group-append" data-target="#dateawal" data-toggle="datetimepicker">
 									<div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -82,7 +82,7 @@
 						placeholder="Tempat Lahir"
 						autocomplete="off"
 						name="ttl"
-						value="{{ $users[0]->ttl }}"
+						value="{{ $users->ttl }}"
 					>
                   </div>
 				  <div class="form-group">
@@ -90,11 +90,11 @@
                         <select 
 							class="custom-select"
 							name="idjabatan"
-						>
+						required>
 						  <option 
 									data-select2-id="31" 
-									value="{{ $users[0]->idjabatan }}"
-								>{{ $users[0]->jabatan }}</option>
+									value="{{$users->jabatan->id}}"
+								>{{$users->jabatan->jabatan}}</option>
                           @foreach ($jabatan as $index => $jabatan_item)
 								<option 
 									data-select2-id="31" 
@@ -103,6 +103,30 @@
 							@endforeach
                         </select>
                    </div>
+
+				   @foreach($users->potongan as $pot)
+				   <div class="form-group">
+                        <label>Potongan Pegawai</label>
+                        <!-- <select 
+							class="custom-select"
+							name="idjabatan"
+						required>
+                          @foreach ($potongan as $index => $jabatan_item)
+								<option 
+									data-select2-id="31" 
+									value="{{ $jabatan_item->id }}"
+								>{{ $jabatan_item->jenis }}</option>
+							@endforeach
+                        </select> -->
+						<select name="potongan_id" class="form-control" id="">
+							<option value="{{$pot->id}}">{{$pot->jenis}}</option>
+							@foreach ($potongan as $index => $jabatan_item)
+							<option value="{{$jabatan_item->id}}">{{ $jabatan_item->jenis }}</option>
+							@endforeach
+						</select>
+                   </div>
+				   @endforeach
+
 				  <div class="form-group">
                     <label for="alamatuser">Alamat </label>
                     <input 
@@ -112,7 +136,7 @@
 						placeholder="Alamat Pegawai"
 						autocomplete="off"
 						name="alamat"
-						value="{{ $users[0]->alamat }}"
+						value="{{ $users->alamat }}"
 					>
                   </div>
                   <div class="form-group">
@@ -124,7 +148,7 @@
 						placeholder="0"
 						autocomplete="off"
 						name="telp"
-						value="{{ $users[0]->telp }}"
+						value="{{ $users->telp }}"
 					>
                   </div>
                 </div>
