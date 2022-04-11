@@ -11,6 +11,6 @@ class Tunjangan extends Model
     ];
     public function jabatan()
     {
-        return $this->hasMany(Jabatan::class);
+        return $this->belongsToMany(Jabatan::class);
     }
 }

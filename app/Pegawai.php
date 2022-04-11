@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pegawai extends Model
 {
+    protected $fillable=[
+        'rfid_id','jabatan_id','nama','tgl','ttl','alamat','telp'
+    ];
+    
+    public function penggajian()
+    {
+        return $this->hasMany(Penggajian::class);
+    }
+    
     public function absensi()
     {
         return $this->hasMany(Absensi::class);

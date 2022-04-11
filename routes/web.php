@@ -3,6 +3,8 @@ use App\Http\Controllers\DashboardAdmin;
 use App\Http\Controllers\JabatanAdmin;
 use App\Http\Controllers\TunjanganAdmin;
 use App\Http\Controllers\PegawaiAdmin;
+use App\Http\Controllers\AbsensiAdmin;
+use App\Http\Controllers\PenggajianAdmin;
 use App\Http\Middleware\checkrole;
 /*
 |--------------------------------------------------------------------------
@@ -84,8 +86,18 @@ Route::get('/admin-dashboard', [DashboardAdmin::class,'page_dashboard'])->name('
 
 Route::get('/admin-jabatan',[JabatanAdmin::class,'page_jabatan'])->name('page.jabatan');
 Route::post('/admin-jabatan-post',[JabatanAdmin::class,'post_jabatan'])->name('post.jabatan');
+Route::post('/admin-jabatan-update',[JabatanAdmin::class,'update_jabatan'])->name('update.jabatan');
+Route::post('/admin-jabatan-dell',[JabatanAdmin::class,'dell_jabatan'])->name('dell.jabatan');
 
 Route::get('/admin-tunjangan',[TunjanganAdmin::class,'page_tunjangan'])->name('page.tunjangan');
+Route::get('/admin-tunjangan-edit/{id}',[TunjanganAdmin::class,'edit_tunjangan'])->name('edit.tunjangan');
 Route::post('/admin-tunjangan-post',[TunjanganAdmin::Class,'post_tunjangan'])->name('post.tunjangan');
+Route::post('/admin-tunjangan-dell',[TunjanganAdmin::class,'dell_tunjangan'])->name('dell.tunjangan');
 
 Route::get('/admin-pegawai',[PegawaiAdmin::class,'page_pegawai'])->name('page.pegawai');
+Route::post('/admin-pegawai-post',[PegawaiAdmin::class,'post_pegawai'])->name('post.pegawai');
+Route::post('/admin-pegawai-dell',[PegawaiAdmin::class,'dell_pegawai'])->name('dell.pegawai');
+
+Route::get('/admin-daftar-absensi',[AbsensiAdmin::class,'page_daftar_absensi'])->name('page.daftar_absensi');
+
+Route::get('/admin-penggajian',[PenggajianAdmin::class,'page_penggajian'])->name('page.penggajian');

@@ -6,8 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Jabatan extends Model
 {
+    protected $fillable=[
+        'jabatan','gajipokok'
+    ];
+
     public function tunjangan()
     {
-        return $this->belongsTo(Tunjangan::class);
+        return $this->belongsToMany(Tunjangan::class);
     }
 }

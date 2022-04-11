@@ -5,7 +5,7 @@
         <div class="page-sidebar-wrapper scrollbar-dynamic" id="main-menu-wrapper">
           <div class="user-info-wrapper sm">
             <div class="profile-wrapper sm">
-              <img src="assets/img/profiles/avatar.jpg" alt="" data-src="assets/img/profiles/avatar.jpg" data-src-retina="assets/img/profiles/avatar2x.jpg" width="69" height="69" />
+              <img src="{{asset('assets/img/profiles/avatar.jpg')}}" alt="" data-src="{{asset('assets/img/profiles/avatar.jpg')}}" data-src-retina="assets/img/profiles/avatar2x.jpg" width="69" height="69" />
               <div class="availability-bubble online"></div>
             </div>
             <div class="user-info sm">

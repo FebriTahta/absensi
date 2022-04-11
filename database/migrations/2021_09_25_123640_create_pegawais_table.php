@@ -15,7 +15,7 @@ class CreatePegawaisTable extends Migration
     {
         Schema::create('pegawais', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('rfid_id');
+            $table->string('rfid_id');
             $table->unsignedBigInteger('jabatan_id');
             $table->string('nama');
             $table->date('tgl');
