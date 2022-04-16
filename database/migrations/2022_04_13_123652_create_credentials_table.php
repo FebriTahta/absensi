@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAbsensisTable extends Migration
+class CreateCredentialsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,11 @@ class CreateAbsensisTable extends Migration
      */
     public function up()
     {
-        Schema::create('absensis', function (Blueprint $table) {
+        Schema::create('credentials', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('pegawai_id')->nullable();
-            $table->date('tanggal')->nullable();
-            $table->string('jam_hadir')->nullable();
+            $table->string('jam_masuk')->nullable();
             $table->string('jam_pulang')->nullable();
-            $table->string('lama_kerja')->nullable();
-            $table->string('lama_lembur')->nullable();
-            $table->string('status')->nullable();
+            $table->string('waktu_absen')->nullable(); 
             $table->timestamps();
         });
     }
@@ -33,6 +29,6 @@ class CreateAbsensisTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('absensis');
+        Schema::dropIfExists('credentials');
     }
 }

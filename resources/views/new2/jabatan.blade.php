@@ -51,7 +51,8 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Jenis</th>
-                                                        <th>Besar</th>
+                                                        <th>Pokok / Jam</th>
+                                                        <th>Lembur / Jam</th>
                                                         <th>Tunjangan</th>
                                                         <th>Option</th>
                                                     </tr>
@@ -61,7 +62,8 @@
                                                 <tfoot>
                                                     <tr>
                                                         <th>Jenis</th>
-                                                        <th>Besar</th>
+                                                        <th>Pokok / Jam</th>
+                                                        <th>Lembur / Jam</th>
                                                         <th>Tunjangan</th>
                                                         <th>Option</th>
                                                     </tr>
@@ -101,7 +103,15 @@
                                         <i class="fa fa-book"></i>
                                     </span>
                                     <input type="number" class="form-control" name="gajipokok"
-                                        placeholder="Gaji Pokok">
+                                        placeholder="Gaji Pokok / Jam">
+                                </div>
+                                <br>
+                                <div class="input-group transparent">
+                                    <span class="input-group-addon ">
+                                        <i class="fa fa-book"></i>
+                                    </span>
+                                    <input type="number" class="form-control" name="gajilembur"
+                                        placeholder="Gaji Lembur / Jam">
                                 </div>
                                 <br>
                                 <hr>
@@ -163,7 +173,15 @@
                                         <i class="fa fa-book"></i>
                                     </span>
                                     <input type="number" class="form-control" name="gajipokok" id="gajipokok"
-                                        placeholder="Gaji Pokok">
+                                        placeholder="Gaji Pokok / Jam">
+                                </div>
+                                <br>
+                                <div class="input-group transparent">
+                                    <span class="input-group-addon ">
+                                        <i class="fa fa-book"></i>
+                                    </span>
+                                    <input type="number" class="form-control" name="gajilembur" id="gajilembur"
+                                        placeholder="Gaji Lembur / Jam">
                                 </div>
                                 <br>
                                 <hr>
@@ -242,11 +260,13 @@
             var id = button.data('id')
             var jabatan = button.data('jabatan')
             var gajipokok = button.data('gajipokok')
+            var gajilembur = button.data('gajilembur')
             
             var modal = $(this)
             modal.find('.modal-body #id').val(id);
             modal.find('.modal-body #jabatan').val(jabatan);
             modal.find('.modal-body #gajipokok').val(gajipokok);
+            modal.find('.modal-body #gajilembur').val(gajilembur);
         })
         $('#modaldell').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget)
@@ -269,6 +289,10 @@
                     {
                         data: 'gajipokok',
                         name: 'gajipokok'
+                    },
+                    {
+                        data: 'gajilembur',
+                        name: 'gajilembur'
                     },
                     {
                         data: 'tunjangan',

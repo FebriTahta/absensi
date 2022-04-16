@@ -17,6 +17,7 @@ class CreateJabatansTable extends Migration
             $table->bigIncrements('id');
             $table->string('jabatan')->nullable();
             $table->bigInteger('gajipokok')->nullable();
+            $table->bigInteger('gajilembur')->nullable();
             $table->timestamps();
         });
     }

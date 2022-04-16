@@ -296,27 +296,7 @@
     <script src="{{ asset('vendors/bower_components/datatables/media/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('dist/js/dataTables-data.js') }}"></script>
     <script>
-        $('#modaledit').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget)
-            var id = button.data('id')
-            var rfid_id = button.data('rfid_id')
-            var nama = button.data('nama')
-            var telp = button.data('telp')
-            var alamat = button.data('alamat')
-            var tgl = button.data('tgl')
-            var ttl = button.data('ttl')
-            var jabatan_id = button.data('jabatan_id')
-            console.log(rfid_id);
-            var modal = $(this)
-            modal.find('.modal-body #id').val(id);
-            modal.find('.modal-body #nama').val(nama);
-            modal.find('.modal-body #telp').val(telp);
-            modal.find('.modal-body #alamat').val(alamat);
-            modal.find('.modal-body #tgl').val(tgl);
-            modal.find('.modal-body #ttl').val(ttl);
-            modal.find('.modal-body #rfid_id').val(rfid_id);
-            modal.find('.modal-body #jabatan_id').val(jabatan_id);
-        })
+        
         $('#modaldell').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget)
             var id = button.data('id')
@@ -481,62 +461,6 @@
             });
         });
 
-        $('#formedit').submit(function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            $.ajax({
-                type: 'POST',
-                url: "{{ route('post.pegawai') }}",
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                beforeSend: function() {
-                    $('#btnedit').attr('disabled', 'disabled');
-                    $('#btnedit').val('Process Adding Tunjangan');
-                },
-                success: function(response) {
-                    if (response.status == 200) {
-                        $('#modaledit').modal('hide');
-                        $("#formedit")[0].reset();
-                        var oTable = $('#example').dataTable();
-                        oTable.fnDraw(false);
-                        $('#btnedit').val('submit!');
-                        $('#btnedit').attr('disabled', false);
-
-                        $.toast({
-                        	heading: 'Hi Admin',
-                        	text: response.message,
-                        	position: 'top-right',
-                        	loaderBg:'#fec107',
-                        	icon: 'success',
-                        	hideAfter: 3500, 
-                        	stack: 6
-                        });
-                    } else {
-                        $("#formedit")[0].reset();
-                        $('#btnedit').val('submit!');
-                        $('#btnedit').attr('disabled', false);
-                        $.toast({
-                        	heading: 'Hi Admin',
-                        	text: response.message,
-                        	position: 'top-right',
-                        	loaderBg:'#fec107',
-                        	icon: 'danger',
-                        	hideAfter: 3500, 
-                        	stack: 6
-                        });
-                        $('#errList').html("");
-                        $('#errList').addClass('alert alert-danger');
-                        $.each(response.errors, function(key, err_values) {
-                            $('#errList').append('<div>' + err_values + '</div>');
-                        });
-                    }
-                },
-                error: function(data) {
-                    console.log(data);
-                }
-            });
-        });
+        
     </script>
 @endsection

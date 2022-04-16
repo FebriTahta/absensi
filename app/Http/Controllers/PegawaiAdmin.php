@@ -54,6 +54,67 @@ class PegawaiAdmin extends Controller
             ]);
 
         }else {
+            $pegawai = Pegawai::where('rfid_id', $request->rfid_id)->first();
+
+            if ($pegawai == null) {
+                # code...
+                $data   = Pegawai::updateOrCreate(
+                    [
+                        'id' => $request->id
+                    ],
+                    [
+                        'rfid_id' => $request->rfid_id,
+                        'jabatan_id'          => $request->jabatan_id,
+                        'nama'          => $request->nama,
+                        'tgl' => $request->tgl,
+                        'ttl' => $request->ttl,
+                        'alamat' => $request->alamat,
+                        'telp'=> $request->telp,
+                    ]
+                );
+                
+                return response()->json(
+                    [
+                      'status'  => 200,
+                      'message' => 'Pegawai has been Added'
+                    ]
+                );
+            }else {
+                # code...
+                return response()->json(
+                    [
+                      'status'  => 200,
+                      'message' => 'PEGAWAI SUDAH TERDAFTAR'
+                    ]
+                );
+            }
+            
+        }
+    }
+
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'rfid_id'       => 'nullable',
+            'jabatan_id'    => 'required',
+            'nama'          => 'required',
+            'tgl'           => 'required',
+            'ttl'           => 'required',
+            'alamat'        => 'required',
+            'telp'          => 'required',
+        ]);
+
+        if ($validator->fails()) {
+
+            return response()->json([
+                'status' => 400,
+                'message'  => 'Response Gagal',
+                'errors' => $validator->messages(),
+            ]);
+
+        }else {
+            
+
             $data   = Pegawai::updateOrCreate(
                 [
                     'id' => $request->id
@@ -72,9 +133,10 @@ class PegawaiAdmin extends Controller
             return response()->json(
                 [
                   'status'  => 200,
-                  'message' => 'Pegawai has been Added'
+                  'message' => 'Pegawai has been Updated'
                 ]
             );
+            
         }
     }
 

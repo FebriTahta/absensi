@@ -10,7 +10,18 @@
                 <ul class="dropdown-menu user-auth-dropdown" data-dropdown-in="flipInX" data-dropdown-out="flipOutX">
                     <li class="divider"></li>
                     <li>
-                        <a href="#"><i class="zmdi zmdi-power"></i><span>Log Out</span></a>
+                        
+                        <div id="navbarDropdown" class=" dropdown-menu-right" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{{ route('logout') }}"
+                               onclick="event.preventDefault();
+                                             document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }}
+                            </a>
+
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </div>
                     </li>
                 </ul>
                 </div>
@@ -22,7 +33,7 @@
             <i class="zmdi zmdi-more"></i>
         </li>
         <li class="">
-            <a href="javascript:void(0);"><div class="pull-left"><i class="zmdi zmdi-landscape mr-20"></i><span class="right-nav-text">Dashboard</span></div></a>
+            <a href="/admin-dashboard"><div class="pull-left"><i class="zmdi zmdi-landscape mr-20"></i><span class="right-nav-text">Dashboard</span></div></a>
         </li>
         
         <li><hr class="light-grey-hr mb-10"/></li>
@@ -54,7 +65,7 @@
                     <a href="/admin-daftar-absensi">Daftar Absensi</a>
                 </li>
                 <li>
-                    <a href="#">Detail Absensi</a>
+                    <a href="/admin-detail-absensi">Detail Absensi</a>
                 </li>
             </ul>
         </li>

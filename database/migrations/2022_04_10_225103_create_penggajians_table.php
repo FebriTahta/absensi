@@ -17,8 +17,11 @@ class CreatePenggajiansTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('pegawai_id')->nullable();
             $table->string('tanggal')->nullable();
-            $table->string('gaji_lembur')->nullable();
+            $table->string('total_lama_kerja')->nullable();
             $table->string('gaji_pokok')->nullable();
+            $table->string('total_lama_lembur')->nullable();
+            $table->string('gaji_lembur')->nullable();
+            $table->string('gaji_tunjangan')->nullable();
             $table->string('gaji_bersih')->nullable();
             $table->timestamps();
         });

@@ -83,6 +83,8 @@ Route::get('/cetak-slip','PenggajianCont@print')->name('print');
 
 // NEW TEMPLATE
 Route::get('/admin-dashboard', [DashboardAdmin::class,'page_dashboard'])->name('page_dashboard');
+Route::post('/admin-dashboard-post-credential',[DashboardAdmin::class,'post_credential'])->name('post.credential');
+Route::get('/admin-dashboard-pilih-bulan/{val}',[DashboardAdmin::class,'pilih_bulan']);
 
 Route::get('/admin-jabatan',[JabatanAdmin::class,'page_jabatan'])->name('page.jabatan');
 Route::post('/admin-jabatan-post',[JabatanAdmin::class,'post_jabatan'])->name('post.jabatan');
@@ -96,8 +98,15 @@ Route::post('/admin-tunjangan-dell',[TunjanganAdmin::class,'dell_tunjangan'])->n
 
 Route::get('/admin-pegawai',[PegawaiAdmin::class,'page_pegawai'])->name('page.pegawai');
 Route::post('/admin-pegawai-post',[PegawaiAdmin::class,'post_pegawai'])->name('post.pegawai');
+Route::post('/admin-pegawai-update',[PegawaiAdmin::class,'update'])->name('update.pegawai');
 Route::post('/admin-pegawai-dell',[PegawaiAdmin::class,'dell_pegawai'])->name('dell.pegawai');
 
 Route::get('/admin-daftar-absensi',[AbsensiAdmin::class,'page_daftar_absensi'])->name('page.daftar_absensi');
+Route::get('/admin-detail-absensi',[AbsensiAdmin::class,'page_detail_absensi'])->name('page.detail_absensi');
+Route::post('/admin-cari-absensi',[AbsensiAdmin::class,'cari_absensi'])->name('cari.absensi');
+Route::get('/admin-cari-absensi-tabel/{pegawai_id}',[AbsensiAdmin::class,'cari_absensi_tabel'])->name('cari.absensi.tabel');
 
 Route::get('/admin-penggajian',[PenggajianAdmin::class,'page_penggajian'])->name('page.penggajian');
+Route::get('/admin-penggajian-cari-tutup-buku/{val}',[PenggajianAdmin::class,'cari_tutup_buku']);
+Route::get('/admin-peggajian-tabel-pegawai-penerima-gaji/{val}', [PenggajianAdmin::class,'tabel_pegawai_penerima_gaji']);
+Route::post('/admin-penggajian-proses-pembukuan',[PenggajianAdmin::class,'proses_pembukuan'])->name('proses.pembukuan');

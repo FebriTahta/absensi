@@ -52,6 +52,7 @@
                                             <table id="example" class="table table-hover display  pb-30">
                                                 <thead>
                                                     <tr>
+                                                        <th>ID</th>
                                                         <th>Nama</th>
                                                         <th>Jabatan</th>
                                                         <th>Phone</th>
@@ -64,6 +65,7 @@
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
+                                                        <th>ID</th>
                                                         <th>Nama</th>
                                                         <th>Jabatan</th>
                                                         <th>Phone</th>
@@ -99,7 +101,7 @@
                                     <span class="input-group-addon ">
                                         <i class="fa fa-user"></i>
                                     </span>
-                                    <input type="text" class="form-control" name="rfid_id" placeholder="SCAN KTP" value="123123123">
+                                    <input type="text" class="form-control" id="idpegawai" name="rfid_id" placeholder="SCAN KTP" required readonly>
                                 </div>
                                 
                                 <hr>
@@ -338,7 +340,11 @@
                 processing: true,
                 serverSide: true,
                 ajax: "/admin-pegawai",
-                columns: [{
+                columns: [
+                    {
+                        data: 'rfid_id',
+                        name: 'rfid_id'
+                    },{
                         data: 'nama',
                         name: 'nama'
                     },
@@ -491,7 +497,7 @@
             var formData = new FormData(this);
             $.ajax({
                 type: 'POST',
-                url: "{{ route('post.pegawai') }}",
+                url: "{{ route('update.pegawai') }}",
                 data: formData,
                 cache: false,
                 contentType: false,
@@ -543,5 +549,49 @@
                 }
             });
         });
+    </script>
+
+
+<script type="text/javascript">
+    var loaddatanow = false ;
+    var updateInterval = 1200 ;
+    var lastdata = 0 ;
+    $(document).ready(function() {
+        function realtimeData(){
+            try{
+                loaddatanow = true ;
+                $.ajax({
+                    method: 'GET',
+                    url: "http://<?php echo $_SERVER['HTTP_HOST']; ?>/getData",
+                    dataType: "json",
+                    success : function( event ){
+                        $("#idpegawai").val(event[0]['value']);
+                        var terdeteksi = $("#idpegawai").val();
+                            
+                        loaddatanow = false ;
+                    },
+                    error : function( r , h , s ){
+                        alert(" MESIN RFID TIDAK TERDETEKSI " + s );				
+                    }
+                }); 
+            }catch(e){
+                alert(" error realtimeData : " + e );
+            }
+        }
+        
+        function __dataInterval(){
+            try{
+                if( !loaddatanow ){
+                    realtimeData();
+                }
+            }catch(e){
+                alert(e);
+            }
+        }
+        
+        setInterval(function() {
+            __dataInterval()
+        }, updateInterval);
+    })
     </script>
 @endsection

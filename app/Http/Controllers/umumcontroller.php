@@ -9,6 +9,7 @@ use App\Jabatan;
 use App\Pegawai;
 use App\Potongan;
 use App\Absensi;
+use App\Credential;
 use App\Rfid;
 USE DB ;
 
@@ -89,7 +90,7 @@ class umumcontroller extends Controller
 		
 		//===> Inisial kan data tanggal , karena pada saat proses penyimpanan data tanggal-
 		//===> ini diperlukan untuk identifikasi data absensi berdasarkan tanggal . 
-		$date = date('y-m-d');
+		$date = date('Y-m-d');
 
 		//==========> mode 0 adallah mode pendaftaran . 
 		//==========> Cek jika mode ini adalah mode pendaftaran .
@@ -171,18 +172,19 @@ class umumcontroller extends Controller
 			// 					->where('tbl_pegawai.id' , $user )
 			// 					->get();
 			$jumlah_user = Pegawai::
-								where('id' , $user )
+								where('rfid_id' , $user )
 								->count();
 			$user_ = Pegawai::
-								where('id' , $user )
+								where('rfid_id' , $user )
 								->first();
 			//==========>
 			// $jumlah_absensi = DB::table('tbl_absensi')
 			// 					->where('tbl_absensi.idpegawai' , $user )
 			// 					->where('tbl_absensi.tanggal' , $date )
 			// 					->count();
+			$pegawaiini = Pegawai::where('rfid_id', $user)->first();
 			$jumlah_absensi = Absensi::
-								where('pegawai_id' , $user )
+								where('pegawai_id' , $pegawaiini->id )
 								->where('tanggal' , $date )
 								->count();
 			//====> Jika user ditemukan pada database , maka lanjutkan ke proses absensi . 					
@@ -193,8 +195,10 @@ class umumcontroller extends Controller
 					//===> Pada proses penyimpanan data keterangan masuk ke database , set data/kolom jam masuk sesuai -
 					//===> jam sekarang dan kosongkan jam keluar . karena awalan kerja adalah masuk baru keluar . 
 					//===> sehingga jam keluar dikosongkan ,karena memang belum ada . 
-					$jam_masuk = '21';
-					if (date('H') == $jam_masuk) {
+					// $jam_masuk = '08';
+					$cre = Credential::first();
+					$jam_masuk = $cre->jam_masuk;
+					if (date('H:i:s') == $jam_masuk) {
 						# code...
 						// DB::table('tbl_absensi')->insert([
 						// 	'idpegawai' => $user ,
@@ -202,20 +206,51 @@ class umumcontroller extends Controller
 						// 	'jam_hadir' => date('H:i:s') ,
 						// 	'jam_pulang' => '00:00:00'
 						// ]);
-						Absensi::insert([
+
+						Absensi::updateOrCreate(
+							[
+								'pegawai_id' => $pegawaiini->id ,
+							],
+							[
+								'pegawai_id' => $pegawaiini->id ,
+								'tanggal' =>date('y-m-d') ,
+								'jam_hadir' => date('H:i:s') ,
+								'jam_pulang' => '00:00:00',
+								'lama_kerja' => '0',
+								'lama_lembur' => '0',
+								'status' => 'ontime',
+							]
+						);
+
+						// Absensi::insert([
 							
-							'pegawai_id' => $user ,
-							'tanggal' =>date('y-m-d') ,
-							'tanggal2'=>Carbon::now()->format('Y-m'),
-							'jam_hadir' => date('H:i:s') ,
-							// 'jam_pulang' => '00:00:00'
-						]);
+						// 	'pegawai_id' => $pegawaiini->id ,
+						// 	'tanggal' =>date('y-m-d') ,
+						// 	// 'tanggal2'=>Carbon::now()->format('Y-m'),
+						// 	'jam_hadir' => date('H:i:s') ,
+						// 	'jam_pulang' => '00:00:00'
+						// ]);
 						//===> kirim pesan pada wemos ESp82266 . bahwa absensi telah berhasil . 
 						//===> dengan parameter absen adalah masuk . informasi yang dikirim adalah-
 						//===> perintah "success_absen" . nama pengguna . parameter absen masuk . 
 						echo "[success_absen" . "," . $user_->nama . ' ,masuk' . ",0]" ;
 					}else{
-						echo "[belum_waktu_absen,0]";
+						Absensi::updateOrCreate(
+							[
+								'pegawai_id' => $pegawaiini->id ,
+							],
+							[
+								'pegawai_id' => $pegawaiini->id ,
+								'tanggal' =>date('y-m-d') ,
+								'jam_hadir' => date('H:i:s') ,
+								'jam_pulang' => '00:00:00',
+								'lama_kerja' => '0',
+								'lama_lembur' => '0',
+								'status' => 'telat',
+							]
+						);
+						echo "[telat" . "," . $user_->nama . ' ,masuk' . ",0]" ;
+						// echo "[belum_waktu_absen,0]";
 					}
 				}
 				else{
@@ -231,7 +266,7 @@ class umumcontroller extends Controller
 					// 					->where('tbl_absensi.tanggal' , $date )
 					// 					->get();
 					$db_res = Absensi::
-										where('pegawai_id' , $user )
+										where('pegawai_id' , $pegawaiini->id )
 										->where('tanggal' , $date )
 										->get();
 					//==========>
@@ -262,9 +297,11 @@ class umumcontroller extends Controller
 					
 					//==========> Gunakan foreach untuk mengakses data jam pulang satu persatu dari data-
 					//==========> yang di temukan .
-					$jam_pulang = '21';
-					$gohome = Absensi::where('pegawai_id' , $user )->where('tanggal' , $date )->first();
-					if ($gohome->jam_pulang == null) {
+					// $jam_pulang = '17';
+					$cre = Credential::first();
+					$jam_pulang = $cre->jam_pulang;
+					$gohome = Absensi::where('pegawai_id' , $pegawaiini->id )->where('tanggal' , $date )->first();
+					if ($gohome->jam_pulang == '00:00:00') {
 						# code...
 						if (date('H') == $jam_pulang || date('H') > $jam_pulang) {
 							# code...
@@ -279,11 +316,34 @@ class umumcontroller extends Controller
 								// 	// 		'jam_pulang' => date('H:i:s')
 								// 	// 	));
 								// }
-								Absensi::
+								$awal 	= strtotime($gohome->jam_hadir);
+								$akhir 	= strtotime(date('H:i:s'));
+								// $pulang = "17:00:00";
+								$pulang = $jam_pulang;
+								$waktu_pulang = strtotime($pulang);
+								//jamkerja
+								$diff 	= $akhir - $awal;
+								$diff2 =strtotime(date('H:i:s')) - $waktu_pulang;
+								if ($waktu_pulang > date('H:i:s')) {
+									# code...
+									Absensi::
 										where('id' , $value->id )
 										->update(array(
-											'jam_pulang' => date('H:i:s')
+											'jam_pulang' => date('H:i:s'),
+											'lama_kerja' => floor($diff / (60 * 60)),
+											// 'lama_lembur' => floor($diff2/3600),
 										));
+								}else {
+									# code...
+									Absensi::
+										where('id' , $value->id )
+										->update(array(
+											'jam_pulang' => date('H:i:s'),
+											'lama_kerja' => floor($diff / (60 * 60)),
+											'lama_lembur' => floor($diff2/3600),
+										));
+								}
+								
 									//===> set false "cekAbsenComplete" untuk menandakan user sedang absen keluar.
 								$cekAbsenComplete = false ;
 							}
@@ -294,7 +354,57 @@ class umumcontroller extends Controller
 								echo "[success_absen" ."," . $user_->nama . ",Sudah Absen"  . ",0]";
 							}
 						}else{
-							echo "[belum_waktu_absen_pulang,0]";
+							foreach( $db_res as $value ){
+								//===> cek data per baris untuk kolomjam pulang dengan data 0:0:0
+								// if ( (  strtotime($value->jam_pulang) ==  strtotime('00:00:00') ) == 1 ){
+								// 	//===================================>
+								// 	//===> Jika sudah di dapat , maka update data tersebut dengan data jam sekarang . 
+								// 	// DB::table('tbl_absensi')
+								// 	// 	->where('id' , $value->id )
+								// 	// 	->update(array(
+								// 	// 		'jam_pulang' => date('H:i:s')
+								// 	// 	));
+								// }
+								
+								$awal 	= strtotime($gohome->jam_hadir);
+								$akhir 	= strtotime(date('H:i:s'));
+								// $pulang = "17:00:00";
+								$pulang = $jam_pulang;
+								$waktu_pulang = strtotime($pulang);
+								//jamkerja
+								$diff 	= $akhir - $awal;
+								if ($waktu_pulang > date('H:i:s')) {
+									# code...
+									Absensi::
+										where('id' , $value->id )
+										->update(array(
+											'jam_pulang' => date('H:i:s'),
+											'lama_kerja' => floor($diff / (60 * 60)),
+											// 'lama_lembur' => floor($diff2/3600),
+										));
+								}else {
+									# code...
+									Absensi::
+										where('id' , $value->id )
+										->update(array(
+											'jam_pulang' => date('H:i:s'),
+											'lama_kerja' => floor($diff / (60 * 60)),
+											'lama_lembur' => floor($diff2/3600),
+										));
+								}
+								
+								
+								
+									//===> set false "cekAbsenComplete" untuk menandakan user sedang absen keluar.
+								$cekAbsenComplete = false ;
+							}
+						
+							if( $cekAbsenComplete == false ){
+								echo "[success_absen" ."," . $user_->nama . ",pulang"  . ",0]";
+							}else{
+								echo "[success_absen" ."," . $user_->nama . ",Sudah Absen"  . ",0]";
+							}
+							// echo "[belum_waktu_absen_pulang,0]";
 						}
 					}else {
 						# code...

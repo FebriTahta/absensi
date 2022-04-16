@@ -16,7 +16,7 @@ class JabatanAdmin extends Controller
             $data   = Jabatan::orderBy('id','desc');
             return DataTables::of($data)
                     ->addColumn('opsi', function($data){
-                        $actionBtn  = '<a href="#" data-toggle="modal" data-jabatan="'.$data->jabatan.'" data-gajipokok="'.$data->gajipokok.'" data-target="#modaledit" data-id="'.$data->id.'" class="btn btn-sm text-white" style="margin-bottom:5px; background-color:blue;"><i class="fa fa-pencil"></i></a>';
+                        $actionBtn  = '<a href="#" data-toggle="modal" data-jabatan="'.$data->jabatan.'" data-gajipokok="'.$data->gajipokok.'" data-gajilembur="'.$data->gajilembur.'" data-target="#modaledit" data-id="'.$data->id.'" class="btn btn-sm text-white" style="margin-bottom:5px; background-color:blue;"><i class="fa fa-pencil"></i></a>';
                         $actionBtn .= '<a data-id="'.$data->id.'" style="margin-bottom:5px" data-toggle="modal" data-target="#modaldell" class="btn btn-sm btn-danger" ><i class="fa fa-trash"></i></a>';
                         return $actionBtn;
                     })
@@ -47,7 +47,7 @@ class JabatanAdmin extends Controller
         $validator = Validator::make($request->all(), [
             'jabatan'   => 'required',
             'gajipokok' => 'required',
-           
+            'gajilembur'=> 'required',
         ]);
 
         if ($validator->fails()) {
@@ -66,6 +66,7 @@ class JabatanAdmin extends Controller
                 [
                     'jabatan'          => $request->jabatan,
                     'gajipokok'        => $request->gajipokok,
+                    'gajilembur'        => $request->gajilembur,
                 ]
             );
 
@@ -91,6 +92,7 @@ class JabatanAdmin extends Controller
         $validator = Validator::make($request->all(), [
             'jabatan'   => 'required',
             'gajipokok' => 'required',
+            'gajilembur'=> 'required'
            
         ]);
 
@@ -110,6 +112,7 @@ class JabatanAdmin extends Controller
                 [
                     'jabatan'          => $request->jabatan,
                     'gajipokok'        => $request->gajipokok,
+                    'gajilembur'        => $request->gajilembur,
                 ]
             );
 

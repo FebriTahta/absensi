@@ -27,6 +27,7 @@ class AbsenSeeder extends Seeder
                 'jam_pulang' => date("19:00:00"),
                 'lama_kerja' => 8,
                 'lama_lembur'=> 2,
+                'status'     => 'ontime'
             ]);
         }
     }

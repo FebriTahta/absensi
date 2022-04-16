@@ -28,7 +28,7 @@
 
             <!-- Row -->
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-12" style="margin-bottom: 50px">
                     <div class="col-lg-12" style="margin-bottom: 20px">
                         <div class="card">
                             <h4>TUTUP BUKU</h4>
@@ -38,7 +38,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <label> PILIH BULAN / TAHUN</label>
-                                    <input type="month" value="<?=date('Y-m')?>" class="form-control">
+                                    <input id="pilih_tutup_buku" type="month" value="<?=date('Y-m')?>" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                                         <div class="container-fluid">
                                             <div class="row">
                                                 <div class="col-xs-6 text-center pl-0 pr-0 txt-light data-wrap-left">
-                                                    <span class="block counter"><span class="counter-anim">{{$pegawai_tutup_buku}} Pegawai</span></span>
+                                                    <span class="block counter" id="pegawai_ok">{{$pegawai_tutup_buku}} Pegawai</span>
                                                     <span class="weight-500 uppercase-font block">Tutup Buku</span>
                                                 </div>
                                                 <div class="col-xs-6 text-center  pl-0 pr-0 txt-light data-wrap-right">
@@ -72,8 +72,8 @@
                                         <div class="container-fluid">
                                             <div class="row">
                                                 <div class="col-xs-6 text-center pl-0 pr-0 data-wrap-left">
-                                                    <span class="txt-light block counter"><span class="counter-anim">{{$pegawai_menunggu}} Pegawai</span></span>
-                                                    <span class="weight-500 uppercase-font block font-13 txt-light">Menunggu</span>
+                                                    <span class="txt-light block counter" id="pegawai_wait">{{$pegawai_menunggu}} Pegawai</span>
+                                                    <span class="weight-500 uppercase-font block font-13 txt-light">Belum Diproses</span>
                                                 </div>
                                                 <div class="col-xs-6 text-center  pl-0 pr-0 data-wrap-right">
                                                     <i class="icon-people  data-right-rep-icon txt-light"></i>
@@ -91,32 +91,37 @@
                             <div class="card-header" style="background-color: darkgray; padding: 2%; text-align: center">
                                 <h5 style="color: white">PILIH PEGAWAI YANG AKAN DIPROSES PEMBUKUAN PENGGAJIAN</h5>
                             </div>
-                            <div class="card-body" style="padding: 5%">
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label for="daftar_pegawai">Daftar Pegawai</label>
-                                            <select name="pegawai_id" class="form-control" id="daftar_pegawai">
-                                                <option value=""></option>
-                                            </select>
+                            <form id="formadd" method="POST"> @csrf
+                                <div class="card-body" style="padding: 5%">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <input type="hidden" value="{{$val}}" name="bulan" id="bulan" class="form-control" required>
+                                            <div class="form-group">
+                                                <label for="daftar_pegawai">Daftar Pegawai</label>
+                                                <select name="daftar_pegawai" class="form-control" id="daftar_pegawai">
+                                                    @foreach ($daftar_pegawai as $item)
+                                                        <option value="{{$item->id}}">{{$item->nama}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label for="proses_pegawai">Proses Pembukuan</label><br>
-                                            <input type="submit" class="btn btn-primary" style="width: 100%" value="PROSES!">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label for="proses_pegawai">Proses Pembukuan</label><br>
+                                                <input type="submit" id="btnadd" class="btn btn-primary" style="width: 100%" value="PROSES!">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="col-lg-12" style="margin-bottom: 20px">
                         <div class="card">
-                            <h4>DATA PENERIMA GAJI</h4>
+                            <h4>DATA PENERIMA GAJI </h4>
                             <hr>
                         </div>
                         <div class="card-body">
@@ -131,9 +136,10 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>Pegawai</th>
-                                                                <th>Tanggal</th>
-                                                                <th>Gaji Lembur</th>
+                                                                <th>Bulan</th>
+                                                                <th>Lemburan</th>
                                                                 <th>Gaji Pokok</th>
+                                                                <th>Tunjangan</th>
                                                                 <th>Gaji Bersih</th>
                                                             </tr>
                                                         </thead>
@@ -142,9 +148,10 @@
                                                         <tfoot>
                                                             <tr>
                                                                 <th>Pegawai</th>
-                                                                <th>Tanggal</th>
-                                                                <th>Gaji Lembur</th>
+                                                                <th>Bulan</th>
+                                                                <th>Lemburan</th>
                                                                 <th>Gaji Pokok</th>
+                                                                <th>Tunjangan</th>
                                                                 <th>Gaji Bersih</th>
                                                             </tr>
                                                         </tfoot>
@@ -161,7 +168,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1">
+        {{-- <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -213,7 +220,7 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="modal fade" id="modaledit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1">
             <div class="modal-dialog" role="document">
@@ -306,5 +313,182 @@
 @section('script')
     <script src="{{ asset('vendors/bower_components/datatables/media/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('dist/js/dataTables-data.js') }}"></script>
-    
+    <script>
+
+        $(document).ready(function() {
+            var table = $('#example').DataTable({
+                destroy: true,
+                processing: true,
+                serverSide: true,
+                ajax: "/admin-penggajian",
+                columns: [{
+                        data: 'nama',
+                        name: 'pegawai.nama'
+                    },
+                    {
+                        data: 'tanggal',
+                        name: 'tanggal'
+                    },
+                    {
+                        data: 'gaji_lembur',
+                        name: 'gaji_lembur'
+                    },
+                    {
+                        data: 'gaji_pokok',
+                        name: 'gaji_pokok'
+                    },
+                    {
+                        data: 'gaji_tunjangan',
+                        name: 'gaji_tunjangan'
+                    },
+                    {
+                        data: 'gaji_bersih',
+                        name: 'gaji_bersih'
+                    },
+                ]
+            });
+        });
+
+
+        $("#pilih_tutup_buku").change(function () {
+            var value = $(this).val();
+            $.ajax({
+                type: "GET",
+                url: "/admin-penggajian-cari-tutup-buku/"+value,
+                async: true,
+                data: {
+                    action1: value // as you are getting in php $_POST['action1'] 
+                },
+                success: function (response) {
+                    // notif
+                    $.toast({
+                        	heading: 'Hi Admin',
+                        	text: response.message,
+                        	position: 'top-right',
+                        	loaderBg:'#fec107',
+                        	icon: 'danger',
+                        	hideAfter: 3500, 
+                        	stack: 6
+                        });
+
+                    // total data
+                    $('#pegawai_ok').html(response.pegawai_ok);
+                    $('#pegawai_wait').html(response.pegawai_wait);
+                    $('#bulan').val(response.tanggal);
+                    console.log(response.daftar_pegawai);
+                    
+                    // option
+                    $('select[name="daftar_pegawai"]').empty();
+                    $.each(response.daftar_pegawai, function(key, value) {
+                        $('select[name="daftar_pegawai"]').append('<option value="'+ value.id +'">'+ value.nama +'</option>');
+                    });
+
+                    // tabel
+                    var table = $('#example').DataTable({
+                        destroy: true,
+                        processing: true,
+                        serverSide: true,
+                        ajax: "/admin-peggajian-tabel-pegawai-penerima-gaji/"+response.tanggal,
+                        columns: [{
+                                data: 'nama',
+                                name: 'pegawai.nama'
+                            },
+                            {
+                                data: 'tanggal',
+                                name: 'tanggal'
+                            },
+                            {
+                                data: 'gaji_lembur',
+                                name: 'gaji_lembur'
+                            },
+                            {
+                                data: 'gaji_pokok',
+                                name: 'gaji_pokok'
+                            },
+                            {
+                                data: 'gaji_tunjangan',
+                                name: 'gaji_tunjangan'
+                            },
+                            {
+                                data: 'gaji_bersih',
+                                name: 'gaji_bersih'
+                            },
+                        ]
+                    });
+                }
+            });
+        });
+
+        $('#formadd').submit(function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('proses.pembukuan') }}",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $('#btnadd').attr('disabled', 'disabled');
+                    $('#btnadd').val('Proses penghitungan gaji');
+                },
+                success: function(response) {
+                    if (response.status == 200) {
+                        $('#exampleModal').modal('hide');
+                        $("#formadd")[0].reset();
+                        var oTable = $('#example').dataTable();
+                        oTable.fnDraw(false);
+                        $('#btnadd').val('submit!');
+                        $('#btnadd').attr('disabled', false);
+
+                        $.toast({
+                        	heading: 'Hi Admin',
+                        	text: response.message,
+                        	position: 'top-right',
+                        	loaderBg:'#fec107',
+                        	icon: 'success',
+                        	hideAfter: 3500, 
+                        	stack: 6
+                        });
+
+                        // total data
+                        $('#pegawai_ok').html(response.pegawai_ok);
+                        $('#pegawai_wait').html(response.pegawai_wait);
+                        $('#bulan').val(response.tanggal);
+                        console.log(response.daftar_pegawai);
+                        
+                        // option
+                        $('select[name="daftar_pegawai"]').empty();
+                        $.each(response.daftar_pegawai, function(key, value) {
+                            $('select[name="daftar_pegawai"]').append('<option value="'+ value.id +'">'+ value.nama +'</option>');
+                        });
+                        
+                    } else {
+                        $("#formadd")[0].reset();
+                        $('#btnadd').val('submit!');
+                        $('#btnadd').attr('disabled', false);
+                        $.toast({
+                        	heading: 'Hi Admin',
+                        	text: response.message,
+                        	position: 'top-right',
+                        	loaderBg:'#fec107',
+                        	icon: 'danger',
+                        	hideAfter: 3500, 
+                        	stack: 6
+                        });
+                        $('#errList').html("");
+                        $('#errList').addClass('alert alert-danger');
+                        $.each(response.errors, function(key, err_values) {
+                            $('#errList').append('<div>' + err_values + '</div>');
+                        });
+                    }
+                },
+                error: function(data) {
+                    console.log(data);
+                }
+            });
+        });
+
+    </script>
 @endsection
