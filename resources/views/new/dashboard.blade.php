@@ -94,7 +94,7 @@
                                                         <div class="row">
                                                             <div class="col-xs-6 text-center pl-0 pr-0 data-wrap-left">
                                                                 <span class="txt-light block counter" id="masuk">
-                                                                    {{ $total }} Pegawai</span>
+                                                                    {{ $total }} / {{$pegawais}} Pegawai</span>
                                                                 <span
                                                                     class="weight-500 uppercase-font block font-13 txt-light">Total
                                                                     Pegawai Masuk</span>
@@ -127,27 +127,27 @@
                                                 <div class="panel-body">
 
                                                     <span class="font-12 head-font txt-dark">Pegawai Telat<span id="p_telat"
-                                                            class="pull-right">70%</span></span>
+                                                            class="pull-right">{{$telatss}}%</span></span>
                                                     <div class="progress mt-10 mb-30">
                                                         <div class="progress-bar progress-bar-danger" id="telats" aria-valuenow="85"
-                                                            aria-valuemin="0" aria-valuemax="100" style="width: 70%"
-                                                            role="progressbar"> <span class="sr-only">85% Complete
+                                                            aria-valuemin="0" aria-valuemax="100" style="width: {{$telatss}}%"
+                                                            role="progressbar"> <span class="sr-only">{{$telatss}}% Complete
                                                                 (success)</span> </div>
                                                     </div>
                                                     <span class="font-12 head-font txt-dark">Pegawai Ontime<span
-                                                            class="pull-right" id="p_ontime">80%</span></span>
+                                                            class="pull-right" id="p_ontime">{{$ontimess}}%</span></span>
                                                     <div class="progress mt-10 mb-30">
                                                         <div class="progress-bar progress-bar-success" id="ontimes" aria-valuenow="80"
-                                                            aria-valuemin="0" aria-valuemax="100" style="width: 80%"
-                                                            role="progressbar"> <span class="sr-only">80% Complete
+                                                            aria-valuemin="0" aria-valuemax="100" style="width: {{$ontimess}}%"
+                                                            role="progressbar"> <span class="sr-only">{{$ontimess}}% Complete
                                                                 (success)</span> </div>
                                                     </div>
                                                     <span class="font-12 head-font txt-dark">Pegawai Masuk<span
-                                                            class="pull-right" id="p_absen">45%</span></span>
+                                                            class="pull-right" id="p_absen">{{$pegawai}}%</span></span>
                                                     <div class="progress mt-10 mb-30">
                                                         <div class="progress-bar progress-bar-inverse" id="masuks" aria-valuenow="85"
-                                                            aria-valuemin="0" aria-valuemax="100" style="width: 45%"
-                                                            role="progressbar"> <span class="sr-only">85% Complete
+                                                            aria-valuemin="0" aria-valuemax="100" style="width: {{$pegawai}}%"
+                                                            role="progressbar"> <span class="sr-only">{{$pegawai}}% Complete
                                                                 (success)</span> </div>
                                                     </div>
 

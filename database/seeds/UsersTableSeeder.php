@@ -35,18 +35,18 @@ class UsersTableSeeder extends Seeder
             'gajilembur' => '25000'
         ]);
 
-        // for ($i=0; $i < 10 ; $i++) { 
-        //     # code...
-        //     \App\Pegawai::create([
-        //         'rfid_id' => str_random(5),
-        //         'nama' => 'dhio'.$i,
-        //         'jabatan_id' => 1,
-        //         'tgl' => date("Y-m-d"),
-        //         'ttl' => 'sidoarjo',
-        //         'alamat' => 'sidoarjo pasar kembang',
-        //         'telp' => '08218132122'
-        //     ]);
-        // }
+        for ($i=0; $i < 10 ; $i++) { 
+            # code...
+            \App\Pegawai::create([
+                'rfid_id' => str_random(5),
+                'nama' => 'dhio'.$i,
+                'jabatan_id' => 1,
+                'tgl' => date("Y-m-d"),
+                'ttl' => 'sidoarjo',
+                'alamat' => 'sidoarjo pasar kembang',
+                'telp' => '08218132122',
+            ]);
+        }
 
         // for ($i=0; $i < 10 ; $i++) { 
         //     # code...

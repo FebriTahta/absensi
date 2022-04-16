@@ -118,9 +118,9 @@
                     </div>
                 </div>
 
-                <div class="col-md-12">
+                <div class="col-md-12" >
                     <div class="col-lg-12" style="margin-bottom: 20px">
-                        <div class="card">
+                        <div class="card" style="margin-top: 20px">
                             <h4>DATA PENERIMA GAJI </h4>
                             <hr>
                         </div>
@@ -141,6 +141,7 @@
                                                                 <th>Gaji Pokok</th>
                                                                 <th>Tunjangan</th>
                                                                 <th>Gaji Bersih</th>
+                                                                <th>Cetak</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -153,6 +154,7 @@
                                                                 <th>Gaji Pokok</th>
                                                                 <th>Tunjangan</th>
                                                                 <th>Gaji Bersih</th>
+                                                                <th>Cetak</th>
                                                             </tr>
                                                         </tfoot>
                                                     </table>
@@ -306,6 +308,45 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="modalprint" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h5 class="modal-title" id="exampleModalLabel1">Cetak Penggajian</h5>
+                    </div>
+                    <form action="/admin-cetak-penggajian" method="POST" enctype="multipart/form-data"> @csrf
+                        <div class="modal-body">
+
+                            <div class="row-fluid">
+                                
+                                <div class="input-group transparent">
+                                   <p>Yakin akan Mencetak Penggajian tersebut ?</p>
+                                    <input type="hidden" name="id" id="id">
+                                    <input type="hidden" name="tanggal" id="tanggal">
+                                    <input type="hidden" name="total_lama_kerja" id="total_lama_kerja">
+                                    <input type="hidden" name="gaji_pokok" id="gaji_pokok">
+                                    <input type="hidden" name="total_lama_lembur" id="total_lama_lembur">
+                                    <input type="hidden" name="gaji_lembur" id="gaji_lembur">
+                                    <input type="hidden" name="gaji_tunjangan" id="gaji_tunjangan">
+                                    <input type="hidden" name="gaji_bersih" id="gaji_bersih">
+                                    <input type="hidden" name="nama" id="nama">
+                                    <input type="hidden" name="jabatan" id="jabatan">
+                                </div>
+                                <br>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <input type="submit" id="btnprint" class="btn btn-sm btn-info" value="Ya Cetak!">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- /Main Content -->
 @endsection
@@ -315,6 +356,30 @@
     <script src="{{ asset('dist/js/dataTables-data.js') }}"></script>
     <script>
 
+        $('#modalprint').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget)
+            var id = button.data('id')
+            var tanggal = button.data('tanggal')
+            var total_lama_kerja = button.data('total_lama_kerja')
+            var gaji_pokok = button.data('gaji_pokok')
+            var total_lama_lembur = button.data('total_lama_lembur')
+            var gaji_lembur = button.data('gaji_lembur')
+            var gaji_tunjangan = button.data('gaji_tunjangan')
+            var gaji_bersih = button.data('gaji_bersih')
+            var jabatan = button.data('jabatan')
+            var nama = button.data('nama')
+            var modal = $(this)
+            modal.find('.modal-body #id').val(id);
+            modal.find('.modal-body #tanggal').val(tanggal);
+            modal.find('.modal-body #total_lama_kerja').val(total_lama_kerja);
+            modal.find('.modal-body #gaji_pokok').val(gaji_pokok);
+            modal.find('.modal-body #total_lama_lembur').val(total_lama_lembur);
+            modal.find('.modal-body #gaji_lembur').val(gaji_lembur);
+            modal.find('.modal-body #gaji_tunjangan').val(gaji_tunjangan);
+            modal.find('.modal-body #gaji_bersih').val(gaji_bersih);
+            modal.find('.modal-body #nama').val(nama);
+            modal.find('.modal-body #jabatan').val(jabatan);
+        })
         $(document).ready(function() {
             var table = $('#example').DataTable({
                 destroy: true,
@@ -345,6 +410,10 @@
                         data: 'gaji_bersih',
                         name: 'gaji_bersih'
                     },
+                    {
+                                data: 'opsi',
+                                name: 'opsi'
+                            },
                 ]
             });
         });
@@ -412,6 +481,10 @@
                             {
                                 data: 'gaji_bersih',
                                 name: 'gaji_bersih'
+                            },
+                            {
+                                data: 'opsi',
+                                name: 'opsi'
                             },
                         ]
                     });

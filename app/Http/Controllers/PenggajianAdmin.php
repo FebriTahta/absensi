@@ -6,6 +6,7 @@ use DataTables;
 use App\Pegawai;
 use App\Penggajian;
 use App\Absensi;
+use PDF;
 use Illuminate\Http\Request;
 
 class PenggajianAdmin extends Controller
@@ -21,8 +22,9 @@ class PenggajianAdmin extends Controller
                         return $data->pegawai->nama;
                     })
                     ->addColumn('opsi', function($data){
-                        $actionBtn  = '<a href="#" data-toggle="modal" data-jenis="'.$data->jenis.'" data-besar="'.$data->besar.'" data-target="#modaledit" data-id="'.$data->id.'" class="btn btn-sm text-white" style="margin-bottom:5px; background-color:blue;"><i class="fa fa-pencil"></i></a>';
-                        $actionBtn .= '<a data-id="'.$data->id.'" style="margin-bottom:5px" data-toggle="modal" data-target="#modaldell" class="btn btn-sm btn-danger" ><i class="fa fa-trash"></i></a>';
+                        $actionBtn  = '<a href="#" data-nama="'.$data->pegawai->nama.'" data-jabatan="'.$data->pegawai->jabatan->jabatan.'" data-tanggal="'.$data->tanggal.'" data-total_lama_kerja="'.$data->total_lama_kerja.'" data-gaji_pokok="'.$data->gaji_pokok.'" data-total_lama_lembur="'.$data->total_lama_lembur.'"
+                        data-gaji_lembur="'.$data->gaji_lembur.'" data-gaji_tunjangan="'.$data->gaji_tunjangan.'" data-gaji_bersih="'.$data->gaji_bersih.'" data-toggle="modal" data-target="#modalprint" data-id="'.$data->id.'" class="btn btn-sm text-white" style="margin-bottom:5px; background-color:blue; border-radius:15px"><i class="fa fa-print"></i></a>';
+                        
                         return $actionBtn;
                     })
             ->rawColumns(['opsi','nama'])
@@ -66,8 +68,8 @@ class PenggajianAdmin extends Controller
                         return $data->pegawai->nama;
                     })
                     ->addColumn('opsi', function($data){
-                        $actionBtn  = '<a href="#" data-toggle="modal" data-jenis="'.$data->jenis.'" data-besar="'.$data->besar.'" data-target="#modaledit" data-id="'.$data->id.'" class="btn btn-sm text-white" style="margin-bottom:5px; background-color:blue;"><i class="fa fa-pencil"></i></a>';
-                        $actionBtn .= '<a data-id="'.$data->id.'" style="margin-bottom:5px" data-toggle="modal" data-target="#modaldell" class="btn btn-sm btn-danger" ><i class="fa fa-trash"></i></a>';
+                        $actionBtn  = '<a href="#" data-nama="'.$data->pegawai->nama.'" data-jabatan="'.$data->pegawai->jabatan->jabatan.'" data-tanggal="'.$data->tanggal.'" data-total_lama_kerja="'.$data->total_lama_kerja.'" data-gaji_pokok="'.$data->gaji_pokok.'" data-total_lama_lembur="'.$data->total_lama_lembur.'"
+                        data-gaji_lembur="'.$data->gaji_lembur.'" data-gaji_tunjangan="'.$data->gaji_tunjangan.'" data-gaji_bersih="'.$data->gaji_bersih.'" data-toggle="modal" data-target="#modalprint" data-id="'.$data->id.'" class="btn btn-sm text-white" style="margin-bottom:5px; background-color:blue; border-radius:15px"><i class="fa fa-print"></i></a>';
                         return $actionBtn;
                     })
             ->rawColumns(['opsi','nama'])
@@ -115,6 +117,24 @@ class PenggajianAdmin extends Controller
         }
     }
 
+    public function print(Request $request)
+    {
+        $nama = $request->nama;
+        $jabatan = $request->jabatan;
+        $tanggal = $request->tanggal;
+        $total_lama_kerja = $request->total_lama_kerja;
+        $gaji_pokok = $request->gaji_pokok;
+        $total_lama_lembur = $request->total_lama_lembur;
+        $gaji_lembur = $request->gaji_lembur;
+        $gaji_tunjangan = $request->gaji_tunjangan;
+        $gaji_bersih = $request->gaji_bersih;
+
+
+        $pdf = PDF::loadview('laporan_gaji_pdf',compact('nama','tanggal','jabatan','total_lama_kerja','gaji_pokok','total_lama_lembur','gaji_lembur'
+    ,'gaji_tunjangan','gaji_bersih'));
+        return $pdf->download('laporan-pegawai.pdf');
+    }
+
     public function proses_pembukuan(Request $request)
     {
         $val = $request->bulan;
@@ -150,9 +170,9 @@ class PenggajianAdmin extends Controller
                             'total_lama_kerja' => $data->sum('lama_kerja'),
                             'gaji_pokok' => $data->sum('lama_kerja')*$gaji_pokok,
                             'total_lama_lembur' => $data->sum('lama_lembur'),
-                            'gaji_lembur' => $data->sum('lama_kerja')*$gaji_lembur,
+                            'gaji_lembur' => $data->sum('lama_lembur')*$gaji_lembur,
                             'gaji_tunjangan' => $nominal * $data->where('status','ontime')->count(),
-                            'gaji_bersih' => ($data->sum('lama_kerja')*$gaji_pokok)+($data->sum('lama_kerja')*$gaji_lembur)
+                            'gaji_bersih' => ($data->sum('lama_kerja')*$gaji_pokok)+($data->sum('lama_lembur')*$gaji_lembur)
                         ]
                     );
                 }else {
@@ -167,9 +187,9 @@ class PenggajianAdmin extends Controller
                             'total_lama_kerja' => $data->sum('lama_kerja'),
                             'gaji_pokok' => $data->sum('lama_kerja')*$gaji_pokok,
                             'total_lama_lembur' => $data->sum('lama_lembur'),
-                            'gaji_lembur' => $data->sum('lama_kerja')*$gaji_lembur,
+                            'gaji_lembur' => $data->sum('lama_lembur')*$gaji_lembur,
                             'gaji_tunjangan' => '0',
-                            'gaji_bersih' => ($data->sum('lama_kerja')*$gaji_pokok)+($data->sum('lama_kerja')*$gaji_lembur)
+                            'gaji_bersih' => ($data->sum('lama_kerja')*$gaji_pokok)+($data->sum('lama_lembur')*$gaji_lembur)
                         ]
                     );
                 }

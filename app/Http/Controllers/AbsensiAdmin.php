@@ -64,6 +64,8 @@ class AbsensiAdmin extends Controller
                   'tepat'   => $tepat_waktu,
                   'telat'   => $telat_waktu,
                   'id_pegawai' => $request->pilih_pegawai,
+                  'bln'     => $bln,
+                  'thn'     => $thn
                 ]
             );
         }else {
@@ -78,11 +80,11 @@ class AbsensiAdmin extends Controller
         
     }
 
-    public function cari_absensi_tabel(Request $request, $pegawai_id)
+    public function cari_absensi_tabel(Request $request, $pegawai_id,$thn,$bln)
     {
         if ($request->ajax()) {
             # code...
-            $data   = Absensi::where('pegawai_id', $pegawai_id)->orderBy('id','desc')->with(['pegawai'])->get();
+            $data   = Absensi::where('pegawai_id', $pegawai_id)->whereMonth('created_at',$bln)->whereYear('created_at',$thn)->get();
             return DataTables::of($data)
                     ->addColumn('nama_pegawai', function($data){
                         if ($data->jam_hadir < '09:00:00') {

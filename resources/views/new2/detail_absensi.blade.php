@@ -206,7 +206,7 @@
                             destroy: true,
                             processing: true,
                             serverSide: true,
-                            ajax: "/admin-cari-absensi-tabel/"+response.id_pegawai,
+                            ajax: "/admin-cari-absensi-tabel/"+response.id_pegawai+"/"+response.thn+"/"+response.bln,
                             columns: [{
                                     data: 'nama_pegawai',
                                     name: 'pegawai.nama'

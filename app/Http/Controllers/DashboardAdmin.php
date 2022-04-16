@@ -22,7 +22,20 @@ class DashboardAdmin extends Controller
             $q->where('tanggal',date('Y-m-d'))->where('status','ontime');
         })->count();
         $credential = Credential::first();
-        return view('new.dashboard',compact('credential','total','telat','ontime'));
+
+        $thn        = date('Y');
+        $bln        = date('m');
+        
+        $absen      = Absensi::whereMonth('created_at', $bln)->whereYear('created_at', $thn)->count();
+        $telats     = Absensi::where('status','telat')->whereMonth('created_at', $bln)->whereYear('created_at', $thn)->count();
+        $telatss    = round(($telats/$absen)*100);
+
+        $ontimes    = Absensi::where('status','ontime')->whereMonth('created_at', $bln)->whereYear('created_at', $thn)->count();
+        $ontimess   = round(($ontimes/$absen)*100);
+            
+        $pegawais   = Pegawai::all()->count();
+        $pegawai    = round(($absen/$pegawais)*100);
+        return view('new.dashboard',compact('credential','total','telat','ontime','telatss','ontimess','pegawai','pegawais'));
     }
 
     public function post_credential(Request $request)
@@ -72,24 +85,14 @@ class DashboardAdmin extends Controller
         $absen = Absensi::whereMonth('created_at', $bln)->whereYear('created_at', $thn)->count();
         if ($absen > 0) {
             # code...
-            if (Absensi::where('status','telat')->whereMonth('created_at', $bln)->whereYear('created_at', $thn)->count() > 0) {
-                # code...
-                $telat = round(Absensi::where('status','telat')->whereMonth('created_at', $bln)->whereYear('created_at', $thn)->count()*100/$absen);
-            }else {
-                # code...
-                $telat = 0;
-            }
+            $telats     = Absensi::where('status','telat')->whereMonth('created_at', $bln)->whereYear('created_at', $thn)->count();
+            $telat      = round(($telats/$absen)*100);
 
-            if (Absensi::where('status','ontime')->whereMonth('created_at', $bln)->whereYear('created_at', $thn)->count() > 0) {
-                # code...
-                $ontime= round(Absensi::where('status','ontime')->whereMonth('created_at', $bln)->whereYear('created_at', $thn)->count()*100/$absen);
-            }else {
-                # code...
-                $ontime = 0;
-            }
+            $ontimes    = Absensi::where('status','ontime')->whereMonth('created_at', $bln)->whereYear('created_at', $thn)->count();
+            $ontime     = round(($ontimes/$absen)*100);
             
-            
-            $pegawai = round($absen/Pegawai::all()->count()*100);
+            $pegawais   = Pegawai::all()->count();
+            $pegawai    = round(($absen/$pegawais)*100);
             // $pegawai = $absen;
             return response()->json(
                 [
@@ -97,7 +100,7 @@ class DashboardAdmin extends Controller
                 'message' => 'Menampilkan data',
                 'telat'   => $telat,
                 'ontime'  => $ontime,
-                'absensi' => $pegawai
+                'absensi' => $pegawai,
                 ]
             );
         }else {
@@ -106,8 +109,6 @@ class DashboardAdmin extends Controller
                 [
                 'status'  => 400,
                 'message' => 'belum ada absensi',
-              
-                
                 ]
             );
         }
